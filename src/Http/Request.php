@@ -56,7 +56,7 @@ class Request
                 return $pathInfo;
             }
         } else {
-            return trim($server['PATH_INFO'], '/');
+            return $server['PATH_INFO'];
         }
     }
 
