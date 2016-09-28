@@ -13,7 +13,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Ken\\": "src/",
+            "Ken\\": "src/"
         },
         "files": ["src/helpers.php"]
     }
