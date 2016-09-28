@@ -1,5 +1,6 @@
 {
     "name": "kenphp/ken",
+    "license": "MIT",
     "authors": [
         {
             "name": "Muhammad Safri Juliardi",
