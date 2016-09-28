@@ -1,0 +1,21 @@
+{
+    "name": "juliardi/ken",
+    "authors": [
+        {
+            "name": "Muhammad Safri Juliardi",
+            "email": "ardi93@gmail.com"
+        }
+    ],
+    "require": {
+        "psr/log": "^1.0",
+        "filp/whoops": "^2.1",
+        "psr/http-message": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ken\\": "src/",
+            "App\\Controllers\\": "app/controllers"
+        },
+        "files": ["src/helpers.php"]
+    }
+}
