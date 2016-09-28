@@ -1,5 +1,5 @@
 {
-    "name": "juliardi/ken",
+    "name": "kenphp/ken",
     "authors": [
         {
             "name": "Muhammad Safri Juliardi",
@@ -14,7 +14,6 @@
     "autoload": {
         "psr-4": {
             "Ken\\": "src/",
-            "App\\Controllers\\": "app/controllers"
         },
         "files": ["src/helpers.php"]
     }
