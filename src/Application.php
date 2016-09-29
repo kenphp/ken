@@ -86,7 +86,7 @@ class Application
             $this->logger->error($exc->getMessage(), ['exception' => $exc]);
         }
 
-        $this->setRoute();
+        $this->setRoute($config);
     }
 
     /**
@@ -147,10 +147,10 @@ class Application
 
     private function initView($config)
     {
-        if (!isset($config['viewPath'])) {
-            throw new InvalidConfigurationException("Parameter 'viewPath' not found in configuration");
+        if (!isset($config['view'])) {
+            throw new InvalidConfigurationException("Parameter 'view' not found in configuration");
         }
-        $this->view = new View($config['viewPath']);
+        $this->view = new View($config['view']);
     }
 
     private function setTimeZone($config)
@@ -163,11 +163,13 @@ class Application
         date_default_timezone_set($this->timeZone);
     }
 
-    protected function setRoute()
+    protected function setRoute($config)
     {
+        if (!isset($config['routeFile'])) {
+            throw new InvalidConfigurationException("Parameter 'routeFile' not found in configuration");
+        }
         $router = $this->router;
-        $routePath = $this->basePath.DIRECTORY_SEPARATOR.'route.php';
-        require_once $routePath;
+        require_once $config['routeFile'];
     }
 
     public function run()
