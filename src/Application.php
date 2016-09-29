@@ -51,6 +51,11 @@ class Application
     protected $basePath;
 
     /**
+     * @var string Application name
+     */
+    protected $name;
+
+    /**
      * @var Ken\Ken Instance of application
      */
     protected static $instance;
@@ -82,6 +87,7 @@ class Application
             $this->initRequest();
             $this->initInput();
             $this->initView($config);
+            $this->name = isset($config['name']) ? $config['name'] : 'Ken Application';
         } catch (InvalidConfigurationException $exc) {
             $this->logger->error($exc->getMessage(), ['exception' => $exc]);
         }
@@ -210,5 +216,10 @@ class Application
     public function getView()
     {
         return $this->view;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 }

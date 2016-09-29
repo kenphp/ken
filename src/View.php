@@ -2,6 +2,9 @@
 
 namespace Ken;
 
+use Twig_Environment;
+use Twig_Loader_Filesystem;
+use Twig_SimpleFunction;
 use Ken\Exception\FileNotFoundException;
 
 /**
@@ -35,10 +38,26 @@ class View
 
     protected function initTwig()
     {
-        $loader = new \Twig_Loader_Filesystem($this->viewPath);
-        $this->twig = new \Twig_Environment($loader, array(
+        $loader = new Twig_Loader_Filesystem($this->viewPath);
+        $this->twig = new Twig_Environment($loader, array(
             'cache' => $this->cachePath,
         ));
+        $functions = $this->getTwigFunction();
+
+        foreach ($functions as $function) {
+            $this->twig->addFunction($function);
+        }
+    }
+
+    protected function getTwigFunction()
+    {
+        $functions = array();
+
+        $functions[] = new Twig_SimpleFunction('app', function () {
+            return app();
+        });
+
+        return $functions;
     }
 
     public function renderTwig(string $view, array $params = [])
