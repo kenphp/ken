@@ -26,19 +26,6 @@ if (!function_exists('render')) {
     }
 }
 
-if (!function_exists('renderTwig')) {
-    /**
-     * Render a view file.
-     *
-     * @param string $view   Path of view file started from 'views' directory
-     * @param array  $params Assosiative array containing parameters to be passed to view
-     */
-    function renderTwig(string $view, $params = [])
-    {
-        return app()->view->renderTwig($view, $params);
-    }
-}
-
 if (!function_exists('inputGet')) {
     /**
      * Retrieve GET parameter.
