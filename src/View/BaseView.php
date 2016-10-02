@@ -9,7 +9,6 @@ abstract class BaseView
 {
     protected $viewPath;
     protected $cachePath;
-    protected static $instance;
 
     public function __construct($config)
     {
@@ -29,17 +28,16 @@ abstract class BaseView
         }
     }
 
-    abstract public function render(string $view, array $params = []);
-
     public static function newFromConfig($className, $config)
     {
-        self::$instance = new $className($config);
-
-        return self::$instance;
+        return new $className($config);
     }
 
-    public static function getInstance($className, $config)
+    protected function suffixExtension(string $view)
     {
-        return $className::newFromConfig($config);
+        return $view.'.'.$this->getFileExtension();
     }
+
+    abstract public function render(string $view, array $params = []);
+    abstract protected function getFileExtension();
 }

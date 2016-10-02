@@ -11,6 +11,7 @@ class PhpEngine extends BaseView
 {
     public function render(string $view, array $params = [])
     {
+        $view = $this->suffixExtension($view);
         try {
             $filepath = $this->findView($view);
             extract($params);
@@ -28,5 +29,10 @@ class PhpEngine extends BaseView
         } else {
             throw new FileNotFoundException("File '$viewFilePath' not found");
         }
+    }
+
+    protected function getFileExtension()
+    {
+        return 'php';
     }
 }

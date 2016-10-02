@@ -16,8 +16,8 @@ class View
 
     public function __construct($config)
     {
-        if (!isset($config['engine'])) {
-            $config['engine'] = 'Ken\\View\\PhpEngine';
+        if (!isset($config['class'])) {
+            $config['class'] = 'Ken\\View\\PhpEngine';
         }
 
         $this->initEngine($config);
@@ -25,7 +25,8 @@ class View
 
     protected function initEngine($config)
     {
-        $this->engine = $config['engine']::newFromConfig($config['engine'], $config);
+        $engineClass = $config['class'];
+        $this->engine = $engineClass::newFromConfig($engineClass, $config);
     }
 
     public function render(string $view, array $params = [])

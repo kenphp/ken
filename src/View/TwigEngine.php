@@ -45,6 +45,13 @@ class TwigEngine extends BaseView
 
     public function render(string $view, array $params = [])
     {
+        $view = $this->suffixExtension($view);
+
         echo $this->twig->render($view, $params);
+    }
+
+    protected function getFileExtension()
+    {
+        return 'twig';
     }
 }
