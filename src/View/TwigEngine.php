@@ -22,9 +22,15 @@ class TwigEngine extends BaseView
     protected function initTwig()
     {
         $loader = new Twig_Loader_Filesystem($this->viewPath);
-        $this->twig = new Twig_Environment($loader, array(
-            'cache' => $this->cachePath,
-        ));
+
+        if (!empty($this->cachePath)) {
+            $this->twig = new Twig_Environment($loader, array(
+                'cache' => $this->cachePath,
+            ));
+        } else {
+            $this->twig = new Twig_Environment($loader);
+        }
+
         $functions = $this->getTwigFunction();
 
         foreach ($functions as $function) {

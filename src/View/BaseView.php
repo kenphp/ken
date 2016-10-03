@@ -13,7 +13,7 @@ abstract class BaseView
     public function __construct($config)
     {
         $viewPath = $config['path'];
-        $cachePath = $config['cache'];
+        $cachePath = isset($config['cache']) ? $config['cache'] : '';
 
         if (substr($viewPath, -1) == DIRECTORY_SEPARATOR) {
             $this->viewPath = $viewPath;
@@ -21,10 +21,12 @@ abstract class BaseView
             $this->viewPath = $viewPath.DIRECTORY_SEPARATOR;
         }
 
-        if (substr($cachePath, -1) == DIRECTORY_SEPARATOR) {
-            $this->cachePath = $cachePath;
-        } else {
-            $this->cachePath = $cachePath.DIRECTORY_SEPARATOR;
+        if (isset($config['cache'])) {
+            if (substr($cachePath, -1) == DIRECTORY_SEPARATOR) {
+                $this->cachePath = $cachePath;
+            } else {
+                $this->cachePath = $cachePath.DIRECTORY_SEPARATOR;
+            }
         }
     }
 
