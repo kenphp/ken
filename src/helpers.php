@@ -40,7 +40,7 @@ if (!function_exists('inputGet')) {
     }
 }
 
-if (!function_exists('paramPost')) {
+if (!function_exists('inputPost')) {
     /**
      * Retrieve POST parameter.
      *
@@ -54,7 +54,7 @@ if (!function_exists('paramPost')) {
     }
 }
 
-if (!function_exists('paramPut')) {
+if (!function_exists('inputPut')) {
     /**
       * Retrieve PUT parameter.
       *
@@ -68,7 +68,7 @@ if (!function_exists('paramPut')) {
      }
 }
 
-if (!function_exists('paramDelete')) {
+if (!function_exists('inputDelete')) {
     /**
       * Retrieve DELETE parameter.
       *

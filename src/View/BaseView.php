@@ -38,6 +38,12 @@ abstract class BaseView
         return $view.'.'.$this->getFileExtension();
     }
 
+    /**
+     * Render a view file.
+     *
+     * @param string $view   Path of view file started from 'views' directory
+     * @param array  $params Assosiative array containing parameters to be passed to view
+     */
     abstract public function render(string $view, array $params = []);
     abstract protected function getFileExtension();
 }

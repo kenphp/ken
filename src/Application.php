@@ -8,6 +8,7 @@ use Ken\Http\Input;
 use Ken\Http\Request;
 use Ken\Log\FileLogger;
 use Ken\Routing\Router;
+use Ken\View\ViewFactory;
 
 /**
  * @property Ken\Log\BaseLogger $logger     Log handler used by the application
@@ -41,7 +42,7 @@ class Application
     protected $input;
 
     /**
-     * @var Ken\View View handler used by the application
+     * @var Ken\View\BaseView View handler used by the application
      */
     protected $view;
 
@@ -156,7 +157,8 @@ class Application
         if (!isset($config['view'])) {
             throw new InvalidConfigurationException("Parameter 'view' not found in configuration");
         }
-        $this->view = new View($config['view']);
+
+        $this->view = ViewFactory::createViewEngine($config['view']);
     }
 
     private function setTimeZone($config)
