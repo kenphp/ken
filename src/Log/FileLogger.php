@@ -11,6 +11,9 @@ use Ken\Exception\InvalidConfigurationException;
  */
 class FileLogger extends BaseLogger
 {
+    /**
+     * @var string Path of log file
+     */
     protected $filepath = '';
 
     public function __construct(array $config)
@@ -28,6 +31,9 @@ class FileLogger extends BaseLogger
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function writeLog(string $log)
     {
         $fileHandle = fopen($this->filepath, 'a');
@@ -41,7 +47,7 @@ class FileLogger extends BaseLogger
      *
      * @param string $filepath Path of log file
      *
-     * @author Juliardi [juliardi93@gmail.com]
+     * @author Juliardi <ardi93@gmail.com>
      */
     public function setFilepath($filepath)
     {

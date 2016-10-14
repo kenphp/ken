@@ -9,7 +9,7 @@ use Psr\Log\AbstractLogger;
 /**
  * This is a base class for all Logger class.
  *
- * @author juliardi [juliardi93@gmail.com]
+ * @author juliardi <ardi93@gmail.com>
  */
 abstract class BaseLogger extends AbstractLogger
 {
@@ -198,7 +198,7 @@ abstract class BaseLogger extends AbstractLogger
     }
 
     /**
-     * Write log into media.
+     * Writes log into media.
      *
      * @param string $log
      */

@@ -14,6 +14,7 @@ class Input
     protected $paramPost;
     protected $paramPut;
     protected $paramDelete;
+    protected $paramFiles;
     private $request;
 
     /**
@@ -34,6 +35,7 @@ class Input
     {
         $this->paramGet = $_GET;
         $this->paramPost = $_POST;
+        $this->paramFiles = $_FILES;
         $this->populatePutParam();
         $this->populateDeleteParam();
     }
@@ -65,7 +67,7 @@ class Input
     /**
      * Retrieve GET parameter.
      *
-     * @param string $nane Name of GET parameter, if null then all parameter will be returned
+     * @param string $name Name of GET parameter, if null then all parameter will be returned
      *
      * @return mixed
      */
@@ -83,7 +85,7 @@ class Input
     /**
      * Retrieve POST parameter.
      *
-     * @param string $nane $name of POST parameter, if null then all parameter will be returned
+     * @param string $name $name of POST parameter, if null then all parameter will be returned
      *
      * @return mixed
      */
@@ -101,7 +103,7 @@ class Input
     /**
      * Retrieve PUT parameter.
      *
-     * @param string $nane Name of PUT parameter, if null then all parameter will be returned
+     * @param string $name Name of PUT parameter, if null then all parameter will be returned
      *
      * @return mixed
      */
@@ -119,7 +121,7 @@ class Input
     /**
      * Retrieve DELETE parameter.
      *
-     * @param string $nane Name of DELETE parameter, if null then all parameter will be returned
+     * @param string $name Name of DELETE parameter, if null then all parameter will be returned
      *
      * @return mixed
      */
@@ -129,6 +131,24 @@ class Input
             return $this->paramDelete;
         } elseif (isset($this->paramDelete[$name])) {
             return $this->paramDelete[$name];
+        }
+
+        return;
+    }
+
+    /**
+     * Retrieve Uploaded Files.
+     *
+     * @param string $name Name of Uploaded Files parameter, if null then all parameter will be returned
+     *
+     * @return mixed
+     */
+    public function files($name = null)
+    {
+        if (is_null($name)) {
+            return $this->paramFiles;
+        } elseif (isset($this->paramFiles[$name])) {
+            return $this->paramFiles[$name];
         }
 
         return;

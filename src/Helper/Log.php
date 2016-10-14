@@ -3,7 +3,7 @@
 namespace Ken\Helper;
 
 /**
- * @author Juliarid <ardi93@gmail.com>
+ * @author Juliardi <ardi93@gmail.com>
  */
 class Log
 {
