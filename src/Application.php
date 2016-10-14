@@ -2,7 +2,6 @@
 
 namespace Ken;
 
-use Ken\Exception\RouteNotFoundException;
 use Ken\Exception\InvalidConfigurationException;
 use Ken\Http\Input;
 use Ken\Http\Request;
@@ -12,7 +11,7 @@ use Ken\View\ViewFactory;
 
 /**
  * @property Ken\Log\BaseLogger $logger     Log handler used by the application
- * @property Ken\Routing\Router  $router     Route handler used by the application
+ * @property Ken\Routing\Router $router     Route handler used by the application
  * @property Ken\Http\Request   $request    Request handler used by the application
  * @property Ken\Http\Input     $input      Input handler used by the application
  * @property Ken\View           $view       View handler used by the application
