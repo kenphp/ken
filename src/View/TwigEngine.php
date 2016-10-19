@@ -9,7 +9,7 @@ use Twig_SimpleFunction;
 /**
  * @author Juliardi <ardi93@gmail.com>
  */
-class TwigEngine extends BaseView
+class TwigEngine extends BaseEngine
 {
     protected $twig;
 

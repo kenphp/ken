@@ -1,20 +1,20 @@
 <?php
 
-namespace Ken\Log;
+namespace Ken\Log\Targets;
 
 use Ken\Exception\InvalidConfigurationException;
+use Ken\Log\LogBuilder;
+use Ken\Log\AbstractTarget;
 
 /**
- * Class Logger for File.
- *
  * @author Juliardi <ardi93@gmail.com>
  */
-class FileLogger extends BaseLogger
+class FileTarget extends AbstractTarget
 {
     /**
      * @var string Path of log file
      */
-    protected $filepath = '';
+    private $_filepath = '';
 
     public function __construct(array $config)
     {
@@ -22,7 +22,7 @@ class FileLogger extends BaseLogger
             throw new InvalidConfigurationException("Parameter 'filepath' not found");
         }
 
-        $this->filepath = $config['filepath'];
+        $this->_filepath = $config['filepath'];
 
         if (isset($config['enabledLevels'])) {
             $this->enabledLevels = $config['enabledLevels'];
@@ -34,23 +34,27 @@ class FileLogger extends BaseLogger
     /**
      * {@inheritdoc}
      */
-    protected function writeLog(string $log)
+    public function collect(array $messages)
     {
-        $fileHandle = fopen($this->filepath, 'a');
+        $logMessages = '';
 
-        fwrite($fileHandle, $log);
-        fclose($fileHandle);
+        foreach ($messages as $value) {
+            $logMessages .= LogBuilder::buildLog($value);
+        }
+
+        $this->writeLog($logMessages);
     }
 
     /**
-     * Set path of log file.
+     * Writes log to media.
      *
-     * @param string $filepath Path of log file
-     *
-     * @author Juliardi <ardi93@gmail.com>
+     * @param string $log
      */
-    public function setFilepath($filepath)
+    private function writeLog(string $log)
     {
-        $this->filepath = $filepath;
+        $fh = fopen($this->_filepath, 'a');
+
+        fwrite($fh, $log);
+        fclose($fh);
     }
 }

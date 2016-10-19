@@ -5,9 +5,12 @@ namespace Ken\Base;
 /**
  *
  */
-abstract class Component
+abstract class Component implements Buildable
 {
-    public function __construct($config)
+    abstract public function __construct(array $config = array());
+
+    public function build(array $config = array())
     {
+        return new static($config);
     }
 }

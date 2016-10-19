@@ -1,163 +1,153 @@
 <?php
 
-namespace Ken;
-
 use Ken\Exception\InvalidConfigurationException;
-use Ken\Http\Input;
-use Ken\Http\Request;
-use Ken\Log\FileLogger;
-use Ken\Routing\Router;
-use Ken\View\ViewFactory;
+use Ken\Utils\Config;
 
 /**
- * @property Ken\Log\BaseLogger $logger     Log handler used by the application
- * @property Ken\Routing\Router $router     Route handler used by the application
- * @property Ken\Http\Request   $request    Request handler used by the application
- * @property Ken\Http\Input     $input      Input handler used by the application
- * @property Ken\View           $view       View handler used by the application
- * @property string             $basePath   Base path of the application
- * @property Ken\Ken            $instance   Instance of application
+ * @author Juliardi <ardi93@gmail.com>
  */
 class Application
 {
-    /**
-     * @var Ken\Log\BaseLogger Log handler used by the application
-     */
-    protected $logger;
+    private $basePath;
+
+    private $name;
+
+    private $timeZone;
 
     /**
-     * @var Ken\Routing\Router Route handler used by the application
+     * @var \Ken\Utils\Config
      */
-    protected $router;
+    private $config;
 
     /**
-     * @var Ken\Http\Request Request handler used by the application
+     * @var array
      */
-    protected $request;
+    private $components;
 
     /**
-     * @var Ken\Http\Input Input handler used by the application
+     * @var \Ken\Application
      */
-    protected $input;
+    private static $instance;
 
-    /**
-     * @var Ken\View\BaseView View handler used by the application
-     */
-    protected $view;
-
-    /**
-     * @var string Base path of the application
-     */
-    protected $basePath;
-
-    /**
-     * @var string Application name
-     */
-    protected $name;
-
-    /**
-     * @var Ken\Ken Instance of application
-     */
-    protected static $instance;
-
-    /**
-     * @var string Time zone used in the application
-     */
-    protected $timeZone;
-
-    public function __construct($config)
+    public function __construct(array $config)
     {
-        self::$instance = $this;
-        $this->initProperty($config);
+        $config = $this->setCoreComponentsConfig($config);
+        $this->config = new Config($config);
+        $this->init();
     }
 
-    private function initProperty($config)
+    private function setCoreComponentsConfig($config)
+    {
+        $coreComponents = $this->coreComponents();
+        $components = $config['components'];
+
+        foreach ($coreComponents as $key => $value) {
+            if (array_key_exists($key, $components)) {
+                $config['components'][$key] = array_merge($config['components'][$key], $value);
+            } else {
+                $config['components'][$key] = $value;
+            }
+        }
+
+        return $config;
+    }
+
+    protected function init()
+    {
+        try {
+            $this->buildComponents();
+            $this->applyConfig($this->config->all());
+        } catch (Exception $e) {
+            if (isset($this->logger)) {
+                $this->logger->error($e->getMessage());
+            } else {
+                error_log($e->getMessage());
+            }
+        }
+    }
+
+    private function buildComponents()
+    {
+        $componentsConfig = $this->config->get('components');
+
+        foreach ($componentsConfig as $key => $value) {
+            if (isset($value['class'])) {
+                $className = $value['class'];
+                $component = $className::build($value);
+                $this->registerComponent($key, $component);
+            } else {
+                throw new InvalidConfigurationException("Parameter 'class' is required in components configuration.");
+            }
+        }
+    }
+
+    /**
+     * Registers a component if there are no other components
+     * with the same name already registered.
+     *
+     * @param string $name       Name of the components
+     * @param object $components An object to be registered
+     *
+     * @return bool True, if success or <br>
+     *              False, if $component is not an object
+     *              or if there are other component with the same name already registered
+     */
+    public function registerComponent($name, $component)
+    {
+        if (is_object($component)) {
+            if (isset($this->components[$name])) {
+                $this->components[$name] = $component;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function __get($name)
+    {
+        if (property_exists($this, $name)) {
+            return $this->name;
+        } elseif (isset($this->components[$name])) {
+            return $this->components[$name];
+        } else {
+            return;
+        }
+    }
+
+    public function run()
+    {
+        $this->router->handleRequest($this->request);
+    }
+
+    private function applyConfig($config)
     {
         try {
             $this->setBasePath($config);
-
-            if (!isset($config['log'])) {
-                $this->initLogger();
-            } else {
-                $this->initLogger($config['log']);
-            }
-
+            $this->setName($config);
             $this->setTimeZone($config);
-            $this->initRouter();
-            $this->initRequest();
-            $this->initInput();
-            $this->initView($config);
-            $this->name = isset($config['name']) ? $config['name'] : 'Ken Application';
-        } catch (InvalidConfigurationException $exc) {
-            $this->logger->error($exc->getMessage(), ['exception' => $exc]);
+        } catch (InvalidConfigurationException $e) {
+            $this->logger->error($e->getMessage());
         }
-
-        $this->setRoute($config);
-    }
-
-    /**
-     * Get instance of application.
-     *
-     * @return Ken\Application
-     */
-    public static function getInstance()
-    {
-        return self::$instance;
     }
 
     private function setBasePath($config)
     {
         if (!isset($config['basePath'])) {
-            throw new InvalidConfigurationException("Parameter 'basePath' not found in configuration");
+            throw new InvalidConfigurationException("Configuration 'basePath' is required");
         }
 
         $this->basePath = $config['basePath'];
     }
 
-    private function initLogger($loggerConfig = null)
+    private function setName($config)
     {
-        if ($loggerConfig == null) {
-            $this->logger = new FileLogger([
-                'filepath' => $this->basePath.DIRECTORY_SEPARATOR.'kenphp.log',
-                'enabledLevels' => ['error', 'warning'],
-            ]);
-        } else {
-            if (!isset($loggerConfig['handler'])) {
-                throw new InvalidConfigurationException("Parameter 'handler' not found in 'log' configuration");
-            }
-
-            $handler = $loggerConfig['handler'];
-
-            if (!isset($loggerConfig['config'])) {
-                throw new InvalidConfigurationException("Parameter 'config' not found in 'log' configuration");
-            }
-
-            $this->logger = new $handler($loggerConfig['config']);
-        }
-    }
-
-    private function initRouter()
-    {
-        $this->router = new Router();
-    }
-
-    private function initRequest()
-    {
-        $this->request = new Request();
-    }
-
-    private function initInput()
-    {
-        $this->input = new Input($this->request);
-    }
-
-    private function initView($config)
-    {
-        if (!isset($config['view'])) {
-            throw new InvalidConfigurationException("Parameter 'view' not found in configuration");
+        if (!isset($config['name'])) {
+            throw new InvalidConfigurationException("Configuration 'name' is required");
         }
 
-        $this->view = ViewFactory::createViewEngine($config['view']);
+        $this->name = $config['name'];
     }
 
     private function setTimeZone($config)
@@ -170,57 +160,13 @@ class Application
         date_default_timezone_set($this->timeZone);
     }
 
-    protected function setRoute($config)
+    private function coreComponents()
     {
-        if (!isset($config['routeFile'])) {
-            throw new InvalidConfigurationException("Parameter 'routeFile' not found in configuration");
-        }
-        $router = $this->router;
-        require_once $config['routeFile'];
-    }
-
-    public function run()
-    {
-        // try {
-            $this->router->handleRequest($this->request);
-        // } catch (RouteNotFoundException $exc) {
-        //     $this->logger->error($exc->getMessage(), ['exception' => $exc]);
-        //     require_once $this->basePath.DIRECTORY_SEPARATOR.'views/404.php';
-        // }
-    }
-
-    public function __get($name)
-    {
-        if (property_exists($this, $name)) {
-            $methodName = 'get'.ucfirst($name);
-            if (method_exists($this, $methodName)) {
-                return $this->$methodName();
-            }
-        }
-    }
-
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    public function getView()
-    {
-        return $this->view;
-    }
-
-    public function getName()
-    {
-        return $this->name;
+        return array(
+            'log' => ['class' => 'Ken\Log\Logger'],
+            'request' => ['class' => 'Ken\Http\ServerRequest'],
+            'router' => ['class' => 'Ken\Routing\Router'],
+            'view' => ['class' => 'Ken\View\View'],
+        );
     }
 }

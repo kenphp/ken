@@ -31,7 +31,7 @@ class Config
      * Gets config value based on key.
      *
      * To access a sub-array you can use a dot separated key.
-     * For example, given this configuration array :.
+     * For example, given this configuration array :
      *
      *     array(
      *          'basePath' => 'somepath',
@@ -47,7 +47,7 @@ class Config
      * The code above will print 'value of key' which is the value of
      * config 'somekey' in the 'params' array.
      *
-     * @param string $key Key of config
+     * @param string $key Dot-separated string of key
      *
      * @return mixed Value of config
      */
@@ -75,7 +75,7 @@ class Config
      * Sets config value based on key.
      *
      * To set a sub-array configuration, you can use a dot separated key.
-     * For example, given this configuration array :.
+     * For example, given this configuration array :
      *
      *     array(
      *          'basePath' => 'somepath',
@@ -88,9 +88,7 @@ class Config
      *
      *     $config->set('params.somekey','another value of key');
      *
-     * @param string $key Key of config
-     *
-     * @return mixed Value of config
+     * @param string $key Dot-separated string of key
      */
     public function set($key, $value)
     {
@@ -102,5 +100,71 @@ class Config
         }
 
         $config = $value;
+    }
+
+     /**
+      * Unsets config value based on key.
+      *
+      * To unset a sub-array configuration, you can use a dot separated key.
+      * For example, given this configuration array :
+      *
+      *     array(
+      *          'basePath' => 'somepath',
+      *          'params' => array(
+      *              'somekey' => 'value of key'
+      *          )
+      *     );
+      *
+      * To unset the value of 'somekey', you can call the method like this :
+      *
+      *     $config->unset('params.somekey');
+      *
+      * @param string $key Dot-separated string of key
+      */
+     public function unset($key)
+     {
+         $keys = explode('.', $key);
+         $cKeys = count($keys);
+         $config = &$this->__config;
+
+         for ($i = 0; $i < $cKeys; ++$i) {
+             if ($i === ($cKeys - 1)) {
+                 unset($config[$keys[$i]]);
+             } elseif (is_array($config)) {
+                 if (array_key_exists($keys[$i], $config)) {
+                     $config = &$config[$keys[$i]];
+                 } else {
+                     return;
+                 }
+             }
+         }
+     }
+
+    /**
+     * Checks whether config has a certain key.
+     *
+     * @param string $key Dot-separated string of key
+     *
+     * @return bool
+     */
+    public function has($key)
+    {
+        $keys = explode('.', $key);
+        $cKeys = count($keys);
+        $config = $this->__config;
+
+        for ($i = 0; $i < $cKeys; ++$i) {
+            if (is_array($config)) {
+                if (array_key_exists($keys[$i], $config)) {
+                    $config = $config[$keys[$i]];
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

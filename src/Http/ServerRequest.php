@@ -2,50 +2,58 @@
 
 namespace Ken\Http;
 
+use Ken\Exception\InvalidConfigurationException;
+
 /**
- * Class Ken\Http\Input
  * Used to retrieve a HTTP Input using GET, POST, PUT, or DELETE method.
  *
  * @author Juliardi <ardi93@gmail.com>
  */
-class Input
+class ServerRequest extends Request
 {
     protected $paramGet;
     protected $paramPost;
     protected $paramPut;
     protected $paramDelete;
     protected $paramFiles;
-    private $request;
 
     /**
      * Constructor.
      *
      * @param Ken\Http\Request $request Instance of Ken\Http\Request class
      */
-    public function __construct(Request $request)
+    public function __construct(array $config = array())
     {
-        $this->request = $request;
-        $this->assignPropertyValue();
+        parent::__construct($config);
+        $this->assignPropertyValue($config);
     }
 
     /**
      * Assign property value.
      */
-    private function assignPropertyValue()
+    private function assignPropertyValue(array $config)
     {
-        $this->paramGet = $_GET;
-        $this->paramPost = $_POST;
-        $this->paramFiles = $_FILES;
-        $this->populatePutParam();
-        $this->populateDeleteParam();
+        if (!isset($config['get'])) {
+            throw new InvalidConfigurationException("Parameter 'get' is required in Request component configuration");
+        } elseif (!isset($config['post'])) {
+            throw new InvalidConfigurationException("Parameter 'post' is required in Request component configuration");
+        } elseif (!isset($config['files'])) {
+            throw new InvalidConfigurationException("Parameter 'files' is required in Request component configuration");
+        } else {
+            $this->paramGet = $_GET;
+            $this->paramPost = $_POST;
+            $this->paramFiles = $_FILES;
+            $this->populatePutParam();
+            $this->populateDeleteParam();
+        }
     }
 
     /**
-     * Populate parameter for PUT request into $paramPut property.
+     * Populates parameter for PUT request into $paramPut property.
      */
     private function populatePutParam()
     {
-        if ($this->request->isPutRequest()) {
+        if ($this->isPutRequest()) {
             parse_str(file_get_contents('php://input'), $this->paramPut);
         } else {
             $this->paramPut = [];
@@ -53,11 +61,11 @@ class Input
     }
 
     /**
-     * Populate parameter for DELETE request into $paramDelete property.
+     * Populates parameter for DELETE request into $paramDelete property.
      */
     private function populateDeleteParam()
     {
-        if ($this->request->isDeleteRequest()) {
+        if ($this->isDeleteRequest()) {
             parse_str(file_get_contents('php://input'), $this->paramDelete);
         } else {
             $this->paramDelete = [];
@@ -65,9 +73,9 @@ class Input
     }
 
     /**
-     * Retrieve GET parameter.
+     * Retrieves GET parameter.
      *
-     * @param string $name Name of GET parameter, if null then all parameter will be returned
+     * @param string $name Name of GET parameter, if null then all value will be returned
      *
      * @return mixed
      */
@@ -83,9 +91,9 @@ class Input
     }
 
     /**
-     * Retrieve POST parameter.
+     * Retrieves POST parameter.
      *
-     * @param string $name $name of POST parameter, if null then all parameter will be returned
+     * @param string $name $name of POST parameter, if null then all value will be returned
      *
      * @return mixed
      */
@@ -101,9 +109,9 @@ class Input
     }
 
     /**
-     * Retrieve PUT parameter.
+     * Retrieves PUT parameter.
      *
-     * @param string $name Name of PUT parameter, if null then all parameter will be returned
+     * @param string $name Name of PUT parameter, if null then all value will be returned
      *
      * @return mixed
      */
@@ -119,9 +127,9 @@ class Input
     }
 
     /**
-     * Retrieve DELETE parameter.
+     * Retrieves DELETE parameter.
      *
-     * @param string $name Name of DELETE parameter, if null then all parameter will be returned
+     * @param string $name Name of DELETE parameter, if null then all value will be returned
      *
      * @return mixed
      */
@@ -137,9 +145,9 @@ class Input
     }
 
     /**
-     * Retrieve Uploaded Files.
+     * Retrieves Uploaded Files.
      *
-     * @param string $name Name of Uploaded Files parameter, if null then all parameter will be returned
+     * @param string $name Name of Uploaded Files parameter, if null then all value will be returned
      *
      * @return mixed
      */

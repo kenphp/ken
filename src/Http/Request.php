@@ -2,10 +2,13 @@
 
 namespace Ken\Http;
 
+use Ken\Base\Component;
+use Ken\Exception\InvalidConfigurationException;
+
 /**
  * @author Juliardi <ardi93@gmail.com>
  */
-class Request
+class Request extends Component
 {
     protected $pathInfo;
     protected $method;
@@ -13,9 +16,12 @@ class Request
     protected $baseUrl;
     protected $requestUri;
 
-    public function __construct()
+    public function __construct(array $config = array())
     {
-        $this->assignPropertyValue($_SERVER);
+        if (!isset($config['server'])) {
+            throw new InvalidConfigurationException("Parameter 'server' is required in Request component configuration");
+        }
+        $this->assignPropertyValue($config['server']);
     }
 
     protected function assignPropertyValue($server)

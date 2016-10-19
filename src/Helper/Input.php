@@ -8,7 +8,7 @@ namespace Ken\Helper;
 class Input
 {
     /**
-     * Retrieve GET parameter.
+     * Retrieves GET parameter.
      *
      * @param string $nane Name of GET parameter, if null then all parameter will be returned
      *
@@ -16,11 +16,11 @@ class Input
      */
     public static function get(string $name = null)
     {
-        return app()->input->get($name);
+        return app()->request->get($name);
     }
 
     /**
-     * Retrieve POST parameter.
+     * Retrieves POST parameter.
      *
      * @param string $nane $name of POST parameter, if null then all parameter will be returned
      *
@@ -28,11 +28,11 @@ class Input
      */
     public static function post(string $name = null)
     {
-        return app()->input->post($name);
+        return app()->request->post($name);
     }
 
     /**
-     * Retrieve DELETE parameter.
+     * Retrieves DELETE parameter.
      *
      * @param string $nane Name of DELETE parameter, if null then all parameter will be returned
      *
@@ -40,11 +40,11 @@ class Input
      */
     public static function delete(string $name = null)
     {
-        return app()->input->delete($name);
+        return app()->request->delete($name);
     }
 
     /**
-     * Retrieve PUT parameter.
+     * Retrieves PUT parameter.
      *
      * @param string $nane Name of PUT parameter, if null then all parameter will be returned
      *
@@ -52,6 +52,18 @@ class Input
      */
     public static function put(string $name = null)
     {
-        return app()->input->put($name);
+        return app()->request->put($name);
+    }
+
+    /**
+     * Retrieves Uploaded Files.
+     *
+     * @param string $name Name of Uploaded Files parameter, if null then all value will be returned
+     *
+     * @return mixed
+     */
+    public static function files(string $name = null)
+    {
+        return app()->request->files($name);
     }
 }

@@ -2,16 +2,23 @@
 
 namespace Ken\View;
 
+use Ken\Base\Buildable;
+use Ken\Exception\InvalidConfigurationException;
+
 /**
  * @author Juliardi <ardi93@gmail.com>
  */
-abstract class BaseView
+abstract class BaseEngine implements Buildable
 {
     protected $viewPath;
     protected $cachePath;
 
     public function __construct($config)
     {
+        if (!isset($config['path'])) {
+            throw new InvalidConfigurationException("Paramter 'path' is required in View component configuration.");
+        }
+
         $viewPath = $config['path'];
         $cachePath = isset($config['cache']) ? $config['cache'] : '';
 
@@ -30,9 +37,9 @@ abstract class BaseView
         }
     }
 
-    public static function newFromConfig($className, $config)
+    public static function build(array $config = array())
     {
-        return new $className($config);
+        return new static($config);
     }
 
     protected function suffixExtension(string $view)

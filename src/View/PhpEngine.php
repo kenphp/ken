@@ -7,7 +7,7 @@ use Ken\Exception\FileNotFoundException;
 /**
  * @author Juliardi <ardi93@gmail.com>
  */
-class PhpEngine extends BaseView
+class PhpEngine extends BaseEngine
 {
     public function render(string $view, array $params = [])
     {

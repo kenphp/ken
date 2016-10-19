@@ -2,21 +2,29 @@
 
 namespace Ken\Routing;
 
+use Ken\Base\Component;
+use Ken\Exception\InvalidConfigurationException;
 use Ken\Http\Request;
 use Ken\Exception\RouteNotFoundException;
 
 /**
  * @author Juliardi <ardi93@gmail.com>
  */
-class Router
+class Router extends Component
 {
     /**
-     * @property RouteCollection $routeCollection Object of RouteCollection
+     * @var \Ken\Routing\RouteCollection
      */
     protected $routeCollection;
 
-    public function __construct()
+    protected $routeFile;
+
+    public function __construct(array $config = array())
     {
+        if (!isset($config['routeFile'])) {
+            throw new InvalidConfigurationException("Paramter 'routeFile' is required in Router component configuration.");
+        }
+        $this->routeFile = $config['routeFile'];
         $this->routeCollection = new RouteCollection();
     }
 
