@@ -18,14 +18,16 @@ class Request extends Component
 
     public function __construct(array $config = array())
     {
-        if (!isset($config['server'])) {
-            throw new InvalidConfigurationException("Parameter 'server' is required in Request component configuration");
-        }
-        $this->assignPropertyValue($config['server']);
+        $this->assignPropertyValue($config);
     }
 
-    protected function assignPropertyValue($server)
+    protected function assignPropertyValue(array $config)
     {
+        if (!array_key_exists('server', $config)) {
+            throw new InvalidConfigurationException("Parameter 'server' is required in Request component configuration");
+        }
+
+        $server = $config['server'];
         $this->method = $server['REQUEST_METHOD'];
         $this->referer = isset($server['HTTP_REFERER']) ? $server['HTTP_REFERER'] : '';
         $this->pathInfo = $this->generatePathInfo($server);

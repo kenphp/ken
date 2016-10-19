@@ -1,6 +1,6 @@
 <?php
 
-namespace Ken\Helper\Config;
+namespace Ken\Helper;
 
 /**
  * @author Juliardi <ardi93@gmail.com>

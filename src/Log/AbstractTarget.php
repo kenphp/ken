@@ -7,7 +7,7 @@ use Ken\Base\Buildable;
 /**
  * @author Juliardi <ardi93@gmail.com>
  */
-class AbstractTarget implements TargetInterface, Buildable
+abstract class AbstractTarget implements TargetInterface, Buildable
 {
     protected $enabled = true;
 
@@ -27,7 +27,8 @@ class AbstractTarget implements TargetInterface, Buildable
         $this->enabled = $enabled;
     }
 
-    public function build(array $config = array()) {
+    public static function build(array $config = array())
+    {
         return new static($config);
     }
 
@@ -35,5 +36,4 @@ class AbstractTarget implements TargetInterface, Buildable
      * {@inheritdoc}
      */
     abstract public function collect(array $messages);
-
 }

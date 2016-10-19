@@ -17,32 +17,28 @@ class ServerRequest extends Request
     protected $paramDelete;
     protected $paramFiles;
 
-    /**
-     * Constructor.
-     *
-     * @param Ken\Http\Request $request Instance of Ken\Http\Request class
-     */
     public function __construct(array $config = array())
     {
-        parent::__construct($config);
         $this->assignPropertyValue($config);
     }
 
     /**
      * Assign property value.
      */
-    private function assignPropertyValue(array $config)
+    protected function assignPropertyValue(array $config)
     {
-        if (!isset($config['get'])) {
+        parent::assignPropertyValue($config);
+
+        if (!array_key_exists('get', $config)) {
             throw new InvalidConfigurationException("Parameter 'get' is required in Request component configuration");
-        } elseif (!isset($config['post'])) {
+        } elseif (!array_key_exists('post', $config)) {
             throw new InvalidConfigurationException("Parameter 'post' is required in Request component configuration");
-        } elseif (!isset($config['files'])) {
+        } elseif (!array_key_exists('files', $config)) {
             throw new InvalidConfigurationException("Parameter 'files' is required in Request component configuration");
         } else {
-            $this->paramGet = $_GET;
-            $this->paramPost = $_POST;
-            $this->paramFiles = $_FILES;
+            $this->paramGet = $config['get'];
+            $this->paramPost = $config['post'];
+            $this->paramFiles = $config['post'];
             $this->populatePutParam();
             $this->populateDeleteParam();
         }

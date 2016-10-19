@@ -122,7 +122,7 @@ class Logger extends AbstractLogger
         }
 
         if ($this->isLevelEnabled($level)) {
-            $timestamp = microtime();
+            $timestamp = strtotime(date('Y-m-d H:i:s'));
             $message = [$timestamp, $level, $message, $context];
             $this->_messages[] = $message;
 

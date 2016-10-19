@@ -1,5 +1,8 @@
 <?php
 
+namespace Ken;
+
+use Exception;
 use Ken\Exception\InvalidConfigurationException;
 use Ken\Utils\Config;
 
@@ -31,9 +34,11 @@ class Application
 
     public function __construct(array $config)
     {
+        $this->components = array();
         $config = $this->setCoreComponentsConfig($config);
         $this->config = new Config($config);
         $this->init();
+        self::$instance = $this;
     }
 
     private function setCoreComponentsConfig($config)
@@ -95,7 +100,7 @@ class Application
     public function registerComponent($name, $component)
     {
         if (is_object($component)) {
-            if (isset($this->components[$name])) {
+            if (!isset($this->components[$name])) {
                 $this->components[$name] = $component;
 
                 return true;
@@ -108,7 +113,7 @@ class Application
     public function __get($name)
     {
         if (property_exists($this, $name)) {
-            return $this->name;
+            return $this->$name;
         } elseif (isset($this->components[$name])) {
             return $this->components[$name];
         } else {
@@ -119,6 +124,7 @@ class Application
     public function run()
     {
         $this->router->handleRequest($this->request);
+        $this->logger->flush();
     }
 
     private function applyConfig($config)
@@ -163,10 +169,21 @@ class Application
     private function coreComponents()
     {
         return array(
-            'log' => ['class' => 'Ken\Log\Logger'],
-            'request' => ['class' => 'Ken\Http\ServerRequest'],
+            'logger' => ['class' => 'Ken\Log\Logger'],
+            'request' => [
+                'class' => 'Ken\Http\ServerRequest',
+                'server' => $_SERVER,
+                'get' => $_GET,
+                'post' => $_POST,
+                'files' => $_FILES,
+            ],
             'router' => ['class' => 'Ken\Routing\Router'],
             'view' => ['class' => 'Ken\View\View'],
         );
+    }
+
+    public static function getInstance()
+    {
+        return self::$instance;
     }
 }

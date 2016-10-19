@@ -24,8 +24,15 @@ class Router extends Component
         if (!isset($config['routeFile'])) {
             throw new InvalidConfigurationException("Paramter 'routeFile' is required in Router component configuration.");
         }
-        $this->routeFile = $config['routeFile'];
         $this->routeCollection = new RouteCollection();
+        $this->setRouteFile($config['routeFile']);
+    }
+
+    protected function setRouteFile($filepath)
+    {
+        $this->routeFile = $filepath;
+        $router = $this;
+        include_once $this->routeFile;
     }
 
     public function route(string $url, callable $target, $method = 'GET', $options = [])
