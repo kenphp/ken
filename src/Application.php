@@ -121,6 +121,11 @@ class Application
         }
     }
 
+    public function __isset($name)
+    {
+        return property_exists($this, $name) || isset($this->components[$name]);
+    }
+
     public function run()
     {
         $this->router->handleRequest($this->request);

@@ -13,4 +13,9 @@ abstract class Component implements Buildable
     {
         return new static($config);
     }
+
+    public function __isset($name)
+    {
+        return property_exists($this, $name);
+    }
 }
