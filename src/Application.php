@@ -13,6 +13,8 @@ class Application
 {
     private $basePath;
 
+    private $baseUrl;
+
     private $name;
 
     private $timeZone;
@@ -136,6 +138,7 @@ class Application
     {
         try {
             $this->setBasePath($config);
+            $this->setBaseUrl($this->request);
             $this->setName($config);
             $this->setTimeZone($config);
         } catch (InvalidConfigurationException $e) {
@@ -150,6 +153,11 @@ class Application
         }
 
         $this->basePath = $config['basePath'];
+    }
+
+    private function setBaseUrl($request)
+    {
+        $this->baseUrl = $request->baseUrl;
     }
 
     private function setName($config)

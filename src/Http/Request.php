@@ -31,7 +31,7 @@ class Request extends Component
         $this->method = $server['REQUEST_METHOD'];
         $this->referer = isset($server['HTTP_REFERER']) ? $server['HTTP_REFERER'] : '';
         $this->pathInfo = $this->generatePathInfo($server);
-        $this->baseUrl = $server['HTTP_HOST'];
+        $this->baseUrl = $this->generateBaseUrl($server);
         $this->requestUri = $server['REQUEST_URI'];
     }
 
@@ -68,6 +68,19 @@ class Request extends Component
         }
     }
 
+    private function generateBaseUrl($server)
+    {
+        $protocol = (isset($server['HTTPS']) && $server['HTTPS'] != 'off') ? 'https' : 'http';
+        $serverName = $server['SERVER_NAME'];
+        $serverPort = $server['SERVER_PORT'];
+
+        if ($serverPort == '80') {
+            return sprintf('%s://%s', $protocol, $serverName);
+        } else {
+            return sprintf('%s://%s:%s', $protocol, $serverName, $serverPort);
+        }
+    }
+
     public function isGetRequest()
     {
         return $this->method == 'GET';
@@ -83,7 +96,7 @@ class Request extends Component
     }
     public function isDeleteRequest()
     {
-        return $this->method == 'DElete';
+        return $this->method == 'DELETE';
     }
 
     public function getPathInfo()
