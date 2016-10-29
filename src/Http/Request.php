@@ -72,9 +72,9 @@ class Request extends Component
     {
         $protocol = (isset($server['HTTPS']) && $server['HTTPS'] != 'off') ? 'https' : 'http';
         $serverName = $server['SERVER_NAME'];
-        $serverPort = $server['SERVER_PORT'];
+        $serverPort = (int) $server['SERVER_PORT'];
 
-        if ($serverPort == '80') {
+        if ($serverPort !== 80 || $serverPort !== 443) {
             return sprintf('%s://%s', $protocol, $serverName);
         } else {
             return sprintf('%s://%s:%s', $protocol, $serverName, $serverPort);

@@ -5,6 +5,7 @@ namespace Ken\View;
 use Twig_Environment;
 use Twig_Loader_Filesystem;
 use Twig_SimpleFunction;
+use Ken\Helper\Url;
 
 /**
  * @author Juliardi <ardi93@gmail.com>
@@ -44,6 +45,14 @@ class TwigEngine extends BaseEngine
 
         $functions[] = new Twig_SimpleFunction('app', function () {
             return app();
+        });
+
+        $functions[] = new Twig_SimpleFunction('url', function ($url, $absolute = false) {
+            return Url::to($url, $absolute);
+        });
+
+        $functions[] = new Twig_SimpleFunction('assets', function ($path) {
+            return Url::to($path, true);
         });
 
         return $functions;
