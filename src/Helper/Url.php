@@ -10,11 +10,11 @@ class Url
     public static function to($url, $absolute = false)
     {
         if ($absolute) {
-            $baseUrl = app()->request->baseUrl;
+            $baseUrl = app()->request->getBaseUrl();
 
-            $url = ltrim('/', $url);
+            $url = ltrim($url, '/');
 
-            return sprintf('%s/%s', $baseUrl, $url);
+            return $baseUrl.'/'.$url;
         } else {
             return $url;
         }
