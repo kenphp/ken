@@ -47,12 +47,16 @@ class TwigEngine extends BaseEngine
             return app();
         });
 
-        $functions[] = new Twig_SimpleFunction('url', function ($url, $absolute = false) {
-            return Url::to($url, $absolute);
+        $functions[] = new Twig_SimpleFunction('url', function ($url, array $params = array(), $absolute = false) {
+            if ($absolute) {
+                return Url::createAbsolute($url, $params);
+            } else {
+                return Url::create($url, $params);
+            }
         });
 
         $functions[] = new Twig_SimpleFunction('assets', function ($path) {
-            return Url::to($path, true);
+            return Url::createAbsolute($path);
         });
 
         return $functions;
