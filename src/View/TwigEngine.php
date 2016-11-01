@@ -47,7 +47,7 @@ class TwigEngine extends BaseEngine
             return app();
         });
 
-        $functions[] = new Twig_SimpleFunction('url', function ($url, array $params = array(), $absolute = false) {
+        $functions[] = new Twig_SimpleFunction('url', function ($url, $absolute = false, array $params = array()) {
             if ($absolute) {
                 return Url::createAbsolute($url, $params);
             } else {
