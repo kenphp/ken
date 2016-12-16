@@ -137,7 +137,7 @@ class Logger extends AbstractLogger
      *
      * @param int $interval
      */
-    public function setFlushIntervals(int $interval)
+    public function setFlushIntervals($interval)
     {
         $this->_flushInterval = $interval;
     }
@@ -168,7 +168,7 @@ class Logger extends AbstractLogger
      * @return bool True, if $level is a valid logging level.
      *              False, if otherwise
      */
-    protected function validLevel(string $level)
+    protected function validLevel($level)
     {
         return in_array($level, $this->_availableLevels);
     }
@@ -181,7 +181,7 @@ class Logger extends AbstractLogger
      * @return bool True, if $level is a enabled.
      *              False, if otherwise
      */
-    protected function isLevelEnabled(string $level)
+    protected function isLevelEnabled($level)
     {
         return in_array($level, $this->_enabledLevels);
     }

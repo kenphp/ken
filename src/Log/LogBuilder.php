@@ -59,7 +59,7 @@ class LogBuilder
      *
      * @return string Logging level in the format '[$level]'
      */
-    private static function addLevel(string $level)
+    private static function addLevel($level)
     {
         return '['.strtoupper($level).'] ';
     }
@@ -92,7 +92,7 @@ class LogBuilder
      *
      * @return string
      */
-    private static function applyContext(string $message, array $context = array())
+    private static function applyContext($message, array $context = array())
     {
         foreach ($context as $key => $value) {
             if ($key != 'exception') {
@@ -112,7 +112,7 @@ class LogBuilder
      *
      * @return string $message with pattern '{$key}' replaced by $context
      */
-    private static function replaceContext(string $message, string $key, $context)
+    private static function replaceContext($message, string $key, $context)
     {
         $strContext = '';
         if (is_object($context)) {

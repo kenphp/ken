@@ -42,7 +42,7 @@ abstract class BaseEngine implements Buildable
         return new static($config);
     }
 
-    protected function suffixExtension(string $view)
+    protected function suffixExtension($view)
     {
         return $view.'.'.$this->getFileExtension();
     }
@@ -53,6 +53,6 @@ abstract class BaseEngine implements Buildable
      * @param string $view   Path of view file started from 'views' directory
      * @param array  $params Assosiative array containing parameters to be passed to view
      */
-    abstract public function render(string $view, array $params = []);
+    abstract public function render($view, array $params = []);
     abstract protected function getFileExtension();
 }

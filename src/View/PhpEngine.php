@@ -9,7 +9,7 @@ use Ken\Exception\FileNotFoundException;
  */
 class PhpEngine extends BaseEngine
 {
-    public function render(string $view, array $params = [])
+    public function render($view, array $params = [])
     {
         $view = $this->suffixExtension($view);
         try {
@@ -21,7 +21,7 @@ class PhpEngine extends BaseEngine
         }
     }
 
-    protected function findView(string $view)
+    protected function findView($view)
     {
         $viewFilePath = $this->viewPath.$view;
         if (file_exists($this->viewPath.$view)) {

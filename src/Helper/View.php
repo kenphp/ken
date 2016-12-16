@@ -15,7 +15,7 @@ class View
      * @param string $view   Path of view file started from 'views' directory
      * @param array  $params Assosiative array containing parameters to be passed to view
      */
-    public static function render(string $view, array $params = [])
+    public static function render($view, array $params = [])
     {
         return Application::getInstance()->view->render($view, $params);
     }

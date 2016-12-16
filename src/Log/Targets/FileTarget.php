@@ -50,7 +50,7 @@ class FileTarget extends AbstractTarget
      *
      * @param string $log
      */
-    private function writeLog(string $log)
+    private function writeLog($log)
     {
         $fh = fopen($this->_filepath, 'a');
 

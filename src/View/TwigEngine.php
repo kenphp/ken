@@ -62,7 +62,7 @@ class TwigEngine extends BaseEngine
         return $functions;
     }
 
-    public function render(string $view, array $params = [])
+    public function render($view, array $params = [])
     {
         $view = $this->suffixExtension($view);
 

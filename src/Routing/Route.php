@@ -17,7 +17,11 @@ class Route
     protected $method = 'GET';
     protected $allowedMethods = ['GET', 'POST', 'PUT', 'DELETE'];
 
-    public function __construct(string $url, callable $target)
+    /**
+     * @param string   $url
+     * @param callable $target
+     */
+    public function __construct($url, callable $target)
     {
         $this->setUrl($url);
         $this->setTarget($target);
@@ -56,6 +60,11 @@ class Route
         }
     }
 
+    /**
+     * Sets name of route.
+     *
+     * @param string $name
+     */
     public function setName($name)
     {
         $this->name = (string) $name;
@@ -106,7 +115,12 @@ class Route
         return $this->after;
     }
 
-    public function setMethod(string $method)
+    /**
+     * Sets method that will be handled by route.
+     *
+     * @param string $method
+     */
+    public function setMethod($method)
     {
         if (in_array($method, $this->allowedMethods)) {
             $this->method = $method;

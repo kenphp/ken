@@ -14,7 +14,7 @@ class Input
      *
      * @return mixed
      */
-    public static function get(string $name = null)
+    public static function get($name = null)
     {
         return app()->request->get($name);
     }
@@ -26,7 +26,7 @@ class Input
      *
      * @return mixed
      */
-    public static function post(string $name = null)
+    public static function post($name = null)
     {
         return app()->request->post($name);
     }
@@ -38,7 +38,7 @@ class Input
      *
      * @return mixed
      */
-    public static function delete(string $name = null)
+    public static function delete($name = null)
     {
         return app()->request->delete($name);
     }
@@ -50,7 +50,7 @@ class Input
      *
      * @return mixed
      */
-    public static function put(string $name = null)
+    public static function put($name = null)
     {
         return app()->request->put($name);
     }
@@ -62,7 +62,7 @@ class Input
      *
      * @return mixed
      */
-    public static function files(string $name = null)
+    public static function files($name = null)
     {
         return app()->request->files($name);
     }

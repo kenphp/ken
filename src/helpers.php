@@ -20,7 +20,7 @@ if (!function_exists('render')) {
      * @param string $view   Path of view file started from 'views' directory
      * @param array  $params Assosiative array containing parameters to be passed to view
      */
-    function render(string $view, $params = [])
+    function render($view, $params = [])
     {
         return app()->view->render($view, $params);
     }

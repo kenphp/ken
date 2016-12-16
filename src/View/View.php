@@ -32,7 +32,7 @@ class View extends Component
      * @param string $view   Path of view file started from 'views' directory
      * @param array  $params Assosiative array containing parameters to be passed to view
      */
-    public function render(string $view, array $params = [])
+    public function render($view, array $params = [])
     {
         return $this->_engine->render($view, $params);
     }

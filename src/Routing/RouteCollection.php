@@ -33,7 +33,7 @@ class RouteCollection
      * @param string $url    Requested url
      * @param string $method Request method
      */
-    public function get(string $url, string $method)
+    public function get($url, $method)
     {
         foreach ($this->arrRoute as $route) {
             if ($route->url == $url && $route->method == $method) {

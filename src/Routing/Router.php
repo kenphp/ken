@@ -35,29 +35,29 @@ class Router extends Component
         include_once $this->routeFile;
     }
 
-    public function route(string $url, callable $target, $method = 'GET', $options = [])
+    public function route($url, callable $target, $method = 'GET', $options = [])
     {
         $route = Route::routeFromConfig(compact('url', 'target', 'method'));
 
         $this->routeCollection->add($route);
     }
 
-    public function get(string $url, callable $target, $options = [])
+    public function get($url, callable $target, $options = [])
     {
         $this->route($url, $target, 'GET', $options);
     }
 
-    public function post(string $url, callable $target, $options = [])
+    public function post($url, callable $target, $options = [])
     {
         $this->route($url, $target, 'POST', $options);
     }
 
-    public function put(string $url, callable $target, $options = [])
+    public function put($url, callable $target, $options = [])
     {
         $this->route($url, $target, 'PUT', $options);
     }
 
-    public function delete(string $url, callable $target, $options = [])
+    public function delete($url, callable $target, $options = [])
     {
         $this->route($url, $target, 'DELETE', $options);
     }
