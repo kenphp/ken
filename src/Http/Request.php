@@ -10,6 +10,7 @@ use Ken\Exception\InvalidConfigurationException;
  */
 class Request extends Component
 {
+    protected $config;
     protected $pathInfo;
     protected $method;
     protected $referer;
@@ -97,6 +98,11 @@ class Request extends Component
     public function isDeleteRequest()
     {
         return $this->method == 'DELETE';
+    }
+
+    public function isAjaxRequest()
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
     }
 
     public function getPathInfo()

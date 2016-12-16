@@ -22,7 +22,7 @@ class Router extends Component
     public function __construct(array $config = array())
     {
         if (!isset($config['routeFile'])) {
-            throw new InvalidConfigurationException("Paramter 'routeFile' is required in Router component configuration.");
+            throw new InvalidConfigurationException("Parameter 'routeFile' is required in Router component configuration.");
         }
         $this->routeCollection = new RouteCollection();
         $this->setRouteFile($config['routeFile']);
