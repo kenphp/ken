@@ -103,7 +103,7 @@ class Config
     }
 
      /**
-      * Unsets config value based on key.
+      * Removes config value based on key.
       *
       * To unset a sub-array configuration, you can use a dot separated key.
       * For example, given this configuration array :
@@ -121,7 +121,7 @@ class Config
       *
       * @param string $key Dot-separated string of key
       */
-     public function unset($key)
+     public function remove($key)
      {
          $keys = explode('.', $key);
          $cKeys = count($keys);
