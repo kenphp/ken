@@ -79,11 +79,11 @@ class Application
                 error_log($e->getMessage());
                 error_log($e->getTraceAsString());
             }
-            echo '<pre>';
-            echo $e->getMessage().PHP_EOL;
-            echo $e->getTraceAsString();
-            echo '</pre>';
-            exit(1);
+            // echo '<pre>';
+            // echo $e->getMessage().PHP_EOL;
+            // echo $e->getTraceAsString();
+            // echo '</pre>';
+            // exit(1);
         }
     }
 
@@ -157,6 +157,17 @@ class Application
     }
 
     /**
+     * Registers application routes.
+     *
+     * @param string $routeFile Route file path
+     */
+    public function registerRoutes($routeFile)
+    {
+        $this->router->setRouteFile($routeFile);
+        $this->router->registerRoutes();
+    }
+
+    /**
      * Applies configuration.
      */
     private function applyConfig($config)
@@ -168,6 +179,7 @@ class Application
             $this->setTimeZone($config);
         } catch (InvalidConfigurationException $e) {
             $this->logger->error($e->getMessage());
+            $this->logger->error($e->getTraceAsString());
         }
     }
 

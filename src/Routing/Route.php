@@ -124,6 +124,8 @@ class Route
     {
         if (in_array($method, $this->allowedMethods)) {
             $this->method = $method;
+        } else {
+            throw new InvalidConfigurationException(sprintf("Method '%s' not allowed", $method));
         }
     }
 
