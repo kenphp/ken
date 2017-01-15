@@ -37,13 +37,20 @@ class Application
     public function __construct(array $config)
     {
         $this->components = array();
-        $config = $this->setCoreComponentsConfig($config);
+        $config = $this->getCoreComponentsConfig($config);
         $this->config = new Config($config);
         $this->init();
         self::$instance = $this;
     }
 
-    private function setCoreComponentsConfig($config)
+    /**
+     * Retrieves core components configuration. Used internally to initialize core components.
+     *
+     * @param array $config
+     *
+     * @return array Configuration array containing core components configurations.
+     */
+    private function getCoreComponentsConfig($config)
     {
         $coreComponents = $this->coreComponents();
         $components = $config['components'];
@@ -67,12 +74,24 @@ class Application
         } catch (Exception $e) {
             if (isset($this->logger)) {
                 $this->logger->error($e->getMessage());
+                $this->logger->error($e->getTraceAsString());
             } else {
                 error_log($e->getMessage());
+                error_log($e->getTraceAsString());
             }
+            echo '<pre>';
+            echo $e->getMessage().PHP_EOL;
+            echo $e->getTraceAsString();
+            echo '</pre>';
+            exit(1);
         }
     }
 
+    /**
+     * Builds components that has been configured in the configuration.
+     *
+     * @throws \Ken\Exception\InvalidConfigurationException
+     */
     private function buildComponents()
     {
         $componentsConfig = $this->config->get('components');
@@ -128,12 +147,18 @@ class Application
         return property_exists($this, $name) || isset($this->components[$name]);
     }
 
+    /**
+     * Runs application to handle request.
+     */
     public function run()
     {
         $this->router->handleRequest($this->request);
         $this->logger->flush();
     }
 
+    /**
+     * Applies configuration.
+     */
     private function applyConfig($config)
     {
         try {
@@ -179,6 +204,9 @@ class Application
         date_default_timezone_set($this->timeZone);
     }
 
+    /**
+     * Returns core components configurations.
+     */
     private function coreComponents()
     {
         return array(

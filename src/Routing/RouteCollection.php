@@ -17,19 +17,27 @@ class RouteCollection
         $this->arrRoute = [];
     }
 
-    public function add(Route $route)
+    /**
+     * Adds route to the collection.
+     *
+     * @param \Ken\Routing\Route $route
+     */
+    public function add($route)
     {
         if (!is_null($route->getName())) {
-            if (array_key_exists($route->getName(), $this->arrRoute)) {
-                throw new DuplicateRouteNameException("Duplicate route name '$route->getName()'");
+            $routeKey = $route->getName().'-'.$route->getMethod();
+            if (array_key_exists($routeKey, $this->arrRoute)) {
+                throw new DuplicateRouteNameException(sprintf("Duplicate route : name='%s' method='%s'", $route->getName(), $route->getMethod()));
             }
-            $this->arrRoute[$route->getName()] = $route;
+            $this->arrRoute[$routeKey] = $route;
         } else {
             array_push($this->arrRoute, $route);
         }
     }
 
     /**
+     * Retrieves route by URL and Method.
+     *
      * @param string $url    Requested url
      * @param string $method Request method
      */

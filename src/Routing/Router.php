@@ -5,7 +5,6 @@ namespace Ken\Routing;
 use Ken\Base\Component;
 use Ken\Exception\InvalidConfigurationException;
 use Ken\Http\Request;
-use Ken\Exception\RouteNotFoundException;
 
 /**
  * @author Juliardi <ardi93@gmail.com>
@@ -67,14 +66,7 @@ class Router extends Component
         $pathInfo = $request->pathInfo;
         $method = $request->method;
 
-        // try {
         $route = $this->routeCollection->get($pathInfo, $method);
         $route->dispatch();
-        // } catch (RouteNotFoundException $exc) {
-        //     // echo $exc->getMessage();
-        //     // echo '<br>';
-        //     // echo $exc->getTraceAsString();
-        //     include_once '../test/404.php';
-        // }
     }
 }
