@@ -51,12 +51,4 @@ class RouteCollection
 
         throw new RouteNotFoundException("Route '$url' with '$method' method not found");
     }
-
-    public function printAll()
-    {
-        echo '<pre>';
-        print_r($this->arrRoute);
-        echo '</pre>';
-        exit(1);
-    }
 }
