@@ -6,6 +6,8 @@ use Ken\Base\Buildable;
 use Ken\Exception\InvalidConfigurationException;
 
 /**
+ * Base class for templating engine.
+ *
  * @author Juliardi <ardi93@gmail.com>
  */
 abstract class BaseEngine implements Buildable
@@ -37,6 +39,9 @@ abstract class BaseEngine implements Buildable
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public static function build(array $config = array())
     {
         return new static($config);
@@ -48,11 +53,22 @@ abstract class BaseEngine implements Buildable
     }
 
     /**
+     * Inits templating engine.
+     */
+    abstract protected function initEngine();
+
+    /**
      * Render a view file.
      *
      * @param string $view   Path of view file started from 'views' directory
      * @param array  $params Assosiative array containing parameters to be passed to view
      */
     abstract public function render($view, array $params = []);
+
+    /**
+     * Retrieves template file extension.
+     *
+     * @return string
+     */
     abstract protected function getFileExtension();
 }
