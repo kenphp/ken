@@ -14,11 +14,12 @@ abstract class BaseEngine implements Buildable
 {
     protected $viewPath;
     protected $cachePath;
+    protected $engine;
 
     public function __construct($config)
     {
         if (!isset($config['path'])) {
-            throw new InvalidConfigurationException("Paramter 'path' is required in View component configuration.");
+            throw new InvalidConfigurationException("Parameter 'path' is required in View component configuration.");
         }
 
         $viewPath = $config['path'];
@@ -71,4 +72,14 @@ abstract class BaseEngine implements Buildable
      * @return string
      */
     abstract protected function getFileExtension();
+
+    /**
+     * Retrieves templating engine instance.
+     *
+     * @return mixed Instance of templating engine instance
+     */
+    public function getEngineInstance()
+    {
+        return $this->engine;
+    }
 }
