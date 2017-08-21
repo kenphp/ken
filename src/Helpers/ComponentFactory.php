@@ -1,7 +1,8 @@
 <?php
 
-namespace Ken\Helper;
+namespace Ken\Helpers;
 
+use Ken\Base\Buildable;
 use Psr\Log\InvalidArgumentException;
 
 /**
@@ -12,10 +13,11 @@ class ComponentFactory
     /**
      * Creates an object.
      *
-     * @param mixed $builder Builder can be an instance of callable, which should return an object
-     *                       or a string which contains fully qualified class name that implements
+     * @param mixed $builder Builder can be an instance of callable that returns an object,
+     *                       or a string that contains fully qualified class name that implements
      *                       Ken\Base\Buildable interface
      *
+     * @param array $parameters List of parameters for creating object
      * @return object
      *
      * @throws \Psr\Log\InvalidArgumentException
@@ -25,9 +27,11 @@ class ComponentFactory
         if (is_callable($builder)) {
             return call_user_func_array($builder, $parameters);
         } elseif (is_string($builder)) {
-            return $builder::build($parameters);
-        } else {
-            throw new InvalidArgumentException("Invalid argument when calling 'createObject' method.");
+            if ($builder instanceof Buildable) {
+                return $builder::build($parameters);
+            }
         }
+
+        throw new InvalidArgumentException("Invalid argument when calling 'createObject' method.");
     }
 }
