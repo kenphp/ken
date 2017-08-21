@@ -2,7 +2,6 @@
 
 namespace Ken\Helpers;
 
-use Ken\Base\Buildable;
 use Psr\Log\InvalidArgumentException;
 
 /**
@@ -27,7 +26,7 @@ class ComponentFactory
         if (is_callable($builder)) {
             return call_user_func_array($builder, $parameters);
         } elseif (is_string($builder)) {
-            if ($builder instanceof Buildable) {
+            if (is_subclass_of($builder, '\\Ken\\Base\\Buildable')) {
                 return $builder::build($parameters);
             }
         }
