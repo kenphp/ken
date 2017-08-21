@@ -11,10 +11,29 @@ use Ken\Exception\InvalidConfigurationException;
  */
 class ServerRequest extends Request
 {
+    /**
+     * @var array
+     */
     protected $paramGet;
+
+    /**
+     * @var array
+     */
     protected $paramPost;
+
+    /**
+     * @var array
+     */
     protected $paramPut;
+
+    /**
+     * @var array
+     */
     protected $paramDelete;
+
+    /**
+     * @var array
+     */
     protected $paramFiles;
 
     public function __construct(array $config = array())
@@ -24,6 +43,7 @@ class ServerRequest extends Request
 
     /**
      * Assign property value.
+     * @param array $config
      */
     protected function assignPropertyValue(array $config)
     {

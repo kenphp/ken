@@ -134,6 +134,9 @@ class Route
         return $this->method;
     }
 
+    /**
+     * Dispatches a route to an appropriate route handler
+     */
     public function dispatch()
     {
         if (isset($this->before)) {

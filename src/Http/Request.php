@@ -10,11 +10,34 @@ use Ken\Exception\InvalidConfigurationException;
  */
 class Request extends Component
 {
+    /**
+     * @var array
+     */
     protected $config;
+
+    /**
+     * @var string
+     */
     protected $pathInfo;
+
+    /**
+     * @var string
+     */
     protected $method;
+
+    /**
+     * @var string
+     */
     protected $referer;
+
+    /**
+     * @var string
+     */
     protected $baseUrl;
+
+    /**
+     * @var string
+     */
     protected $requestUri;
 
     public function __construct(array $config = array())
@@ -22,6 +45,10 @@ class Request extends Component
         $this->assignPropertyValue($config);
     }
 
+    /**
+     * Assigns property value of this class
+     * @param array $config
+     */
     protected function assignPropertyValue(array $config)
     {
         if (!array_key_exists('server', $config)) {
@@ -52,6 +79,11 @@ class Request extends Component
         }
     }
 
+    /**
+     * Generates path info value
+     * @param array $server The value of $_SERVER global variable
+     * @return string Path info value
+     */
     private function generatePathInfo($server)
     {
         if (!array_key_exists('PATH_INFO', $server)) {
@@ -69,6 +101,11 @@ class Request extends Component
         }
     }
 
+    /**
+     * Generates base url of application
+     * @param array $server The value of $_SERVER global variable
+     * @return string The value of base url
+     */
     private function generateBaseUrl($server)
     {
         $protocol = (isset($server['HTTPS']) && $server['HTTPS'] != 'off') ? 'https' : 'http';
@@ -82,49 +119,91 @@ class Request extends Component
         }
     }
 
+    /**
+     * Checks whether a request's method is 'GET'
+     * @return bool
+     */
     public function isGetRequest()
     {
         return $this->method == 'GET';
     }
 
+    /**
+     * Checks whether a request's method is 'POST'
+     * @return bool
+     */
     public function isPostRequest()
     {
         return $this->method == 'POST';
     }
+
+    /**
+     * Checks whether a request's method is 'PUT'
+     * @return bool
+     */
     public function isPutRequest()
     {
         return $this->method == 'PUT';
     }
+
+    /**
+     * Checks whether a request's method is 'DELETE'
+     * @return bool
+     */
     public function isDeleteRequest()
     {
         return $this->method == 'DELETE';
     }
 
+    /**
+     * Checks whether a request is AJAX request
+     * @return bool
+     */
     public function isAjaxRequest()
     {
         return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
     }
 
+    /**
+     * Retrieves path info value
+     * @return string
+     */
     public function getPathInfo()
     {
         return $this->pathInfo;
     }
 
+    /**
+     * Retrieves request method
+     * @return string
+     */
     public function getMethod()
     {
         return $this->method;
     }
 
+    /**
+     * Retrieves refererer Url
+     * @return string
+     */
     public function getReferer()
     {
         return $this->referer;
     }
 
     public function getBaseUrl()
+    /**
+    * Retrieves base url value
+    * @return string
+    */
     {
         return $this->baseUrl;
     }
 
+    /**
+     * Retrieves request Uri value
+     * @return string
+     */
     public function getRequestUri()
     {
         return $this->requestUri;

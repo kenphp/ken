@@ -1,6 +1,6 @@
 <?php
 
-namespace Ken\Helper;
+namespace Ken\Helpers;
 
 use Ken\Application;
 
