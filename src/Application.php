@@ -4,6 +4,7 @@ namespace Ken;
 
 use Exception;
 use Ken\Exception\InvalidConfigurationException;
+use Ken\Helpers\ComponentFactory;
 use Ken\Utils\Config;
 
 /**
@@ -94,7 +95,7 @@ class Application
         foreach ($componentsConfig as $key => $value) {
             if (isset($value['class'])) {
                 $className = $value['class'];
-                $component = $className::build($value);
+                $component = ComponentFactory::createObject($className, $value);
                 $this->registerComponent($key, $component);
             } else {
                 throw new InvalidConfigurationException("Parameter 'class' is required in components configuration.");
