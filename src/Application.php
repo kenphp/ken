@@ -79,11 +79,6 @@ class Application
                 error_log($e->getMessage());
                 error_log($e->getTraceAsString());
             }
-            // echo '<pre>';
-            // echo $e->getMessage().PHP_EOL;
-            // echo $e->getTraceAsString();
-            // echo '</pre>';
-            // exit(1);
         }
     }
 
