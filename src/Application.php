@@ -107,7 +107,7 @@ class Application
      * with the same name already registered.
      *
      * @param string $name       Name of the components
-     * @param object $components An object to be registered
+     * @param object $component An object to be registered
      *
      * @return bool True, if success or <br>
      *              False, if $component is not an object
@@ -164,6 +164,7 @@ class Application
 
     /**
      * Applies configuration.
+     * @param array $config
      */
     private function applyConfig($config)
     {
@@ -178,6 +179,10 @@ class Application
         }
     }
 
+    /**
+     * Sets base path of application
+     * @param array $config
+     */
     private function setBasePath($config)
     {
         if (!isset($config['basePath'])) {
@@ -187,11 +192,19 @@ class Application
         $this->basePath = $config['basePath'];
     }
 
+    /**
+     * Sets base url of application
+     * @param \Ken\Http\Request
+     */
     private function setBaseUrl($request)
     {
         $this->baseUrl = $request->baseUrl;
     }
 
+    /**
+     * Sets application name
+     * @param array $config
+     */
     private function setName($config)
     {
         if (!isset($config['name'])) {
@@ -201,6 +214,10 @@ class Application
         $this->name = $config['name'];
     }
 
+    /**
+     * Sets application time zone
+     * @param array $config
+     */
     private function setTimeZone($config)
     {
         if (!isset($config['timeZone'])) {
@@ -230,6 +247,9 @@ class Application
         );
     }
 
+    /**
+     * @return static
+     */
     public static function getInstance()
     {
         return self::$instance;

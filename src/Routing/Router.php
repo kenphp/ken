@@ -32,6 +32,7 @@ class Router extends Component
     protected $namespace;
 
     /**
+     * @param array $config
      * @return static
      */
     public function __construct(array $config = array())

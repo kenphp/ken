@@ -43,6 +43,7 @@ class ServerRequest extends Request
 
     /**
      * Assign property value.
+     * @param array $config
      */
     protected function assignPropertyValue(array $config)
     {

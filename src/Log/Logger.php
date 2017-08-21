@@ -12,6 +12,7 @@ class Logger extends AbstractLogger
 {
     /**
      * Available Log Level.
+     * @var array
      */
     private $_availableLevels = array('emergency', 'alert', 'critical',
                                         'error', 'warning', 'notice',
@@ -19,13 +20,23 @@ class Logger extends AbstractLogger
 
     /**
      * Log Level that should be processed. Empty array means every log message will be ignored.
+     * @var array
      */
     private $_enabledLevels = array();
 
+    /**
+     * @var array
+     */
     private $_messages = array();
 
+    /**
+     * @var int
+     */
     private $_flushInterval = 100;
 
+    /**
+     * @var array
+     */
     private $_targets;
 
     public function __construct(array $config = array())
@@ -33,6 +44,10 @@ class Logger extends AbstractLogger
         $this->applyConfig($config);
     }
 
+    /**
+     * Applies log configuration
+     * @param array $config
+     */
     private function applyConfig($config)
     {
         try {
@@ -63,13 +78,16 @@ class Logger extends AbstractLogger
         }
     }
 
+    /**
+         * @inheritDoc
+     */
     public static function build(array $config = array())
     {
         return new static($config);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function registerTarget(TargetInterface $target)
     {
@@ -77,7 +95,7 @@ class Logger extends AbstractLogger
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function unregisterTarget(TargetInterface $target)
     {
@@ -89,7 +107,7 @@ class Logger extends AbstractLogger
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function dispatch($messages)
     {
@@ -113,7 +131,7 @@ class Logger extends AbstractLogger
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function log($level, $message, array $context = array())
     {
