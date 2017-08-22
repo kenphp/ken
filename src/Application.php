@@ -4,7 +4,7 @@ namespace Ken;
 
 use Exception;
 use Ken\Exception\InvalidConfigurationException;
-use Ken\Helpers\ComponentFactory;
+use Ken\Factory\ComponentFactory;
 use Ken\Utils\Config;
 
 /**
@@ -12,12 +12,24 @@ use Ken\Utils\Config;
  */
 class Application
 {
+    /**
+     * @var string
+     */
     private $basePath;
 
+    /**
+     * @var string
+     */
     private $baseUrl;
 
+    /**
+     * @var string
+     */
     private $name;
 
+    /**
+     * @var string
+     */
     private $timeZone;
 
     /**
@@ -34,6 +46,11 @@ class Application
      * @var \Ken\Application
      */
     private static $instance;
+
+    /**
+     * @var \Ken\Factory\FactoryInterface
+     */
+    private $factory;
 
     public function __construct(array $config)
     {
@@ -84,6 +101,19 @@ class Application
     }
 
     /**
+     * Retrieves \Ken\Factory\FactoryInterface instance
+     * @return \Ken\Factory\FactoryInterface
+     */
+    protected function getFactory()
+    {
+        if (is_null($this->factory)) {
+            $this->factory = new ComponentFactory();
+        }
+
+        return $this->factory;
+    }
+
+    /**
      * Builds components that has been configured in the configuration.
      *
      * @throws \Ken\Exception\InvalidConfigurationException
@@ -91,11 +121,12 @@ class Application
     private function buildComponents()
     {
         $componentsConfig = $this->config->get('components');
+        $factory = $this->getFactory();
 
         foreach ($componentsConfig as $key => $value) {
             if (isset($value['class'])) {
                 $className = $value['class'];
-                $component = ComponentFactory::createObject($className, $value);
+                $component = $factory->createObject($className, $value);
                 $this->registerComponent($key, $component);
             } else {
                 throw new InvalidConfigurationException("Parameter 'class' is required in components configuration.");
@@ -195,7 +226,7 @@ class Application
 
     /**
      * Sets base url of application
-     * @param \Ken\Http\Request
+     * @param \Ken\Http\Request $request
      */
     private function setBaseUrl($request)
     {

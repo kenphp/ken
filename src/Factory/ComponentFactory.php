@@ -1,13 +1,13 @@
 <?php
 
-namespace Ken\Helpers;
+namespace Ken\Factory;
 
 use Psr\Log\InvalidArgumentException;
 
 /**
  * @author Juliardi <ardi93@gmail.com>
  */
-class ComponentFactory
+class ComponentFactory implements FactoryInterface
 {
     /**
      * Creates an object.
@@ -21,7 +21,7 @@ class ComponentFactory
      *
      * @throws \Psr\Log\InvalidArgumentException
      */
-    public static function createObject($builder, $parameters = array())
+    public function createObject($builder, $parameters = array())
     {
         if (is_callable($builder)) {
             return call_user_func_array($builder, $parameters);
