@@ -79,7 +79,11 @@ class Router extends Component
 
         $target = $this->convertCallbackToClosure($target, $this->namespace);
 
-        $route = Route::routeFromConfig(compact('url', 'target', 'method'));
+        $options['url'] = $url;
+        $options['target'] = $target;
+        $options['method'] = $method;
+
+        $route = Route::routeFromConfig($options);
 
         $this->routeCollection->add($route);
     }

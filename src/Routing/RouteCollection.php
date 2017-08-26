@@ -44,7 +44,7 @@ class RouteCollection
     public function get($url, $method)
     {
         foreach ($this->arrRoute as $route) {
-            if ($route->url == $url && $route->method == $method) {
+            if ($route->isMatch($url, $method)) {
                 return $route;
             }
         }

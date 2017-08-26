@@ -129,9 +129,24 @@ class Route
         }
     }
 
+    /**
+     * Retrieves route method
+     * @return string
+     */
     public function getMethod()
     {
         return $this->method;
+    }
+
+    /**
+     * Checks whether this route matches with the requested URL
+     * @param string $url Request Url
+     * @param string $method Request method
+     * @return bool
+     */
+    public function isMatch($url, $method)
+    {
+        return ($this->url === $url && $this->method === $method);
     }
 
     /**
