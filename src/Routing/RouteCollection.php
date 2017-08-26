@@ -3,7 +3,7 @@
 namespace Ken\Routing;
 
 use Ken\Exception\DuplicateRouteNameException;
-use Ken\Exception\RouteNotFoundException;
+use Ken\Exception\HttpException;
 
 /**
  *  @author Juliardi <ardi93@gmail.com>
@@ -49,6 +49,6 @@ class RouteCollection
             }
         }
 
-        throw new RouteNotFoundException("Route '$url' with '$method' method not found");
+        throw new HttpException(404, "Route '$url' with '$method' method not found");
     }
 }

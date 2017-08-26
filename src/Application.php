@@ -89,6 +89,7 @@ class Application
         try {
             $this->buildComponents();
             $this->applyConfig($this->config->all());
+            $this->registerErrorHandler();
         } catch (Exception $e) {
             if (isset($this->logger)) {
                 $this->logger->error($e->getMessage());
@@ -193,6 +194,39 @@ class Application
         $this->router->setRouteFile($routeFile);
         $this->router->registerRoutes();
     }
+
+
+    /**
+     * Registers error handler for this application
+     */
+    public function registerErrorHandler()
+    {
+        $whoops = new \Whoops\Run();
+
+        if ($this->config->get('debug')) {
+            $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
+        } else {
+            $whoops->pushHandler(new \Whoops\Handler\CallbackHandler(function ($exception) {
+                $this->logger->error($exception->getMessage(), compact('exception'));
+                $this->logger->flush();
+
+                if (is_a($exception, '\\Ken\\Exception\\HttpException')) {
+                    return $this->view->render('error', [
+                        'code' => $exception->getCode(),
+                        'message' => $exception->getMessage(),
+                    ]);
+                } else {
+                    return $this->view->render('error', [
+                        'code' => 500,
+                        'message' => $exception->getMessage(),
+                    ]);
+                }
+            }));
+        }
+
+        $whoops->register();
+    }
+
 
     /**
      * Applies configuration.
