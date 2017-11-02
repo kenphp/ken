@@ -198,7 +198,7 @@ class Router extends Component
      */
     protected function convertCallbackToClosure($callback, $namespace)
     {
-        if ($callback instanceof Closure) {
+        if ($callback instanceof Closure || is_callable($callback)) {
             return $callback;
         } elseif (is_string($callback)) {
             $namespace = rtrim($namespace, '\\').'\\';
