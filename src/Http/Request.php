@@ -191,11 +191,11 @@ class Request extends Component
         return $this->referer;
     }
 
-    public function getBaseUrl()
     /**
     * Retrieves base url value
     * @return string
     */
+    public function getBaseUrl()
     {
         return $this->baseUrl;
     }
