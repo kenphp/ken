@@ -36,11 +36,17 @@ class Application {
     protected $configuration;
 
     /**
+     * @var static
+     */
+    protected static $instance;
+
+    /**
      * @param array $configuration
      */
     public function __construct($configuration = []) {
         $this->container = new Container(['configuration' => $configuration]);
         $this->init();
+        self::$instance = $this;
     }
 
     /**
@@ -188,5 +194,12 @@ class Application {
 
         (new \Zend\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
 
+    }
+
+    /**
+     * @return static
+     */
+    public static function getInstance() {
+        return self::$instance;
     }
 }
