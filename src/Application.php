@@ -176,7 +176,7 @@ class Application {
             $pathInfo = '/';
         }
 
-        $routeObject = $this->router->resolve($httpMethod, $pathInfo);
+        $routeObject = $this->router->resolve($pathInfo, $httpMethod);
         if($routeObject) {
             foreach ($routeObject['before'] as $before) {
                 call_user_func($before, $request);
