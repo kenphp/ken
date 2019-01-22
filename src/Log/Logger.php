@@ -81,7 +81,7 @@ class Logger extends AbstractLogger
     /**
          * @inheritDoc
      */
-    public static function build(array $config = array())
+    public static function build($config = [])
     {
         return new static($config);
     }
@@ -140,8 +140,13 @@ class Logger extends AbstractLogger
         }
 
         if ($this->isLevelEnabled($level)) {
-            $timestamp = strtotime(date('Y-m-d H:i:s'));
-            $message = [$timestamp, $level, $message, $context];
+            $timestamp = time();
+            $message = [
+                'timestamp' => $timestamp,
+                'level' => $level,
+                'message' => $message,
+                'context' => $context,
+            ];
             $this->_messages[] = $message;
 
             if ($this->_flushInterval > 0 && count($this->_messages) >= $this->_flushInterval) {

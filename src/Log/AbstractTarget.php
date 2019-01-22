@@ -27,7 +27,7 @@ abstract class AbstractTarget implements TargetInterface, Buildable
         $this->enabled = $enabled;
     }
 
-    public static function build(array $config = array())
+    public static function build($config = [])
     {
         return new static($config);
     }
