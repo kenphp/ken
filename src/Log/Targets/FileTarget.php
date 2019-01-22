@@ -3,8 +3,9 @@
 namespace Ken\Log\Targets;
 
 use Ken\Exception\InvalidConfigurationException;
-use Ken\Log\LogBuilder;
+use Ken\Log\LogFormatter;
 use Ken\Log\AbstractTarget;
+use Ken\Log\FormatterInterface;
 
 /**
  * @author Juliardi <ardi93@gmail.com>
@@ -16,10 +17,26 @@ class FileTarget extends AbstractTarget
      */
     private $_filepath = '';
 
+    /**
+     * Log formatter
+     * @var \Ken\Log\FormatterInterface
+     */
+    private $_formatter;
+
     public function __construct(array $config)
     {
         if (!isset($config['filepath'])) {
             throw new InvalidConfigurationException("Parameter 'filepath' not found");
+        }
+
+        if (isset($config['formatter'])) {
+            if ($config['formatter'] instanceof FormatterInterface) {
+                $this->_formatter = $config['formatter'];
+            } else {
+                $this->_formatter = LogFormatter::build($config['formatter']);
+            }
+        } else {
+            $this->_formatter = LogFormatter::build();
         }
 
         $this->_filepath = $config['filepath'];
@@ -39,7 +56,7 @@ class FileTarget extends AbstractTarget
         $logMessages = '';
 
         foreach ($messages as $value) {
-            $logMessages .= LogBuilder::buildLog($value);
+            $logMessages .= $this->_formatter->formatLog($value) . "\n";
         }
 
         $this->writeLog($logMessages);

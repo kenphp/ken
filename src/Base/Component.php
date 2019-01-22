@@ -15,7 +15,7 @@ abstract class Component implements Buildable
      * @param array $config
      * @return static
      */
-    public static function build(array $config = array())
+    public static function build($config = [])
     {
         return new static($config);
     }

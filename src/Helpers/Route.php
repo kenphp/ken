@@ -10,85 +10,88 @@ class Route
     /**
      * Adds route to $routeCollection.
      *
-     * @param string  $url
-     * @param Closure $target  Target Closure that will be called when the route is requested
+     * @param string  $route
+     * @param callable $handler  Target callable that will be called when the route is requested
      * @param string  $method  HTTP Method
      * @param array   $options
      */
-    public static function route($url, $target, $method = 'GET', $options = [])
+    public static function route($route, $handler, $method = 'GET', $options = [])
     {
-        app()->router->addRoute($url, $target, $method, $options);
+        app()->router->route($method, $route, $handler, $options);
     }
 
     /**
      * Adds GET route to $routeCollection.
      *
-     * @param string  $url
-     * @param Closure $target  Target Closure that will be called when the route is requested
+     * @param string  $route
+     * @param callable $handler  Target callable that will be called when the route is requested
      * @param array   $options
      */
-    public static function get($url, $target, $options = [])
+    public static function get($route, $handler, $options = [])
     {
-        app()->router->get($url, $target, $options);
+        app()->router->get($route, $handler, $options);
     }
 
     /**
      * Adds POST route to $routeCollection.
      *
-     * @param string  $url
-     * @param Closure $target  Target Closure that will be called when the route is requested
+     * @param string  $route
+     * @param callable $handler  Target callable that will be called when the route is requested
      * @param array   $options
      */
-    public static function post($url, $target, $options = [])
+    public static function post($route, $handler, $options = [])
     {
-        app()->router->post($url, $target, $options);
+        app()->router->post($route, $handler, $options);
     }
 
     /**
      * Adds PUT route to $routeCollection.
      *
-     * @param string  $url
-     * @param Closure $target  Target Closure that will be called when the route is requested
+     * @param string  $route
+     * @param callable $handler  Target callable that will be called when the route is requested
      * @param array   $options
      */
-    public static function put($url, $target, $options = [])
+    public static function put($route, $handler, $options = [])
     {
-        app()->router->put($url, $target, $options);
+        app()->router->put($route, $handler, $options);
     }
 
     /**
      * Adds DELETE route to $routeCollection.
      *
-     * @param string  $url
-     * @param Closure $target  Target Closure that will be called when the route is requested
+     * @param string  $route
+     * @param callable $handler  Target callable that will be called when the route is requested
      * @param array   $options
      */
-    public static function delete($url, $target, $options = [])
+    public static function delete($route, $handler, $options = [])
     {
-        app()->router->delete($url, $target, $options);
+        app()->router->delete($route, $handler, $options);
     }
 
     /**
      * Adds route with several HTTP methods bind to $routeCollection.
      *
      * @param array   $methods HTTP Methods that apply to the routes
-     * @param string  $url
-     * @param Closure $target  Target Closure that will be called when the route is requested
+     * @param string  $route
+     * @param callable $handler  Target callable that will be called when the route is requested
      * @param array   $options
      */
-    public static function map($methods, $url, $target, $options = [])
+    public static function map($methods, $route, $handler, $options = [])
     {
-        app()->router->map($methods, $url, $target, $options);
+        foreach ($methods as $method) {
+            app()->router->route($method, $route, $handler, $options);
+        }
     }
 
     /**
      * Adds group route.
      *
+     * @param string $route Group base route
+     * @param callable $callback
      * @param array   $options
-     * @param Closure $callback
      */
-    public static function group($options, $callback)
+    public static function group($route, $callback, $options)
     {
-        app()->router->group($options, $callback);
+        app()->router->group($route, $callback, $options);
     }
 }

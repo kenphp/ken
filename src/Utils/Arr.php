@@ -5,16 +5,19 @@ namespace Ken\Utils;
 /**
  * @author Juliardi <ardi93@gmail.com>
  */
-class Config
+class Arr implements \ArrayAccess
 {
-    private $__config;
+    /**
+     * @var array
+     */
+    private $_arr;
 
     /**
-     * @param array $config Configuration array
+     * @param array $arr An array
      */
-    public function __construct(array $config)
+    public function __construct(array $arr)
     {
-        $this->__config = $config;
+        $this->_arr = $arr;
     }
 
     /**
@@ -24,7 +27,7 @@ class Config
      */
     public function all()
     {
-        return $this->__config;
+        return $this->_arr;
     }
 
     /**
@@ -47,24 +50,25 @@ class Config
      * The code above will print 'value of key' which is the value of
      * config 'somekey' in the 'params' array.
      *
-     * @param string $key Dot-separated string of key
+     * @param string $key           Dot-separated string of key
+     * @param mixed $defaultValue   Default value returned when **$key** is not found.
      *
      * @return mixed Value of config
      */
-    public function get($key)
+    public function get($key, $defaultValue = null)
     {
         $keys = explode('.', $key);
-        $config = $this->__config;
+        $config = $this->_arr;
 
         foreach ($keys as $value) {
             if (is_array($config)) {
                 if (array_key_exists($value, $config)) {
                     $config = $config[$value];
                 } else {
-                    return;
+                    return $defaultValue;
                 }
             } else {
-                return;
+                return $defaultValue;
             }
         }
 
@@ -89,11 +93,12 @@ class Config
      *     $config->set('params.somekey','another value of key');
      *
      * @param string $key Dot-separated string of key
+     * @param mixed $value
      */
     public function set($key, $value)
     {
         $keys = explode('.', $key);
-        $config = &$this->__config;
+        $config = &$this->_arr;
 
         foreach ($keys as $val) {
             $config = &$config[$val];
@@ -125,7 +130,7 @@ class Config
      {
          $keys = explode('.', $key);
          $cKeys = count($keys);
-         $config = &$this->__config;
+         $config = &$this->_arr;
 
          for ($i = 0; $i < $cKeys; ++$i) {
              if ($i === ($cKeys - 1)) {
@@ -151,7 +156,7 @@ class Config
     {
         $keys = explode('.', $key);
         $cKeys = count($keys);
-        $config = $this->__config;
+        $config = $this->_arr;
 
         for ($i = 0; $i < $cKeys; ++$i) {
             if (is_array($config)) {
@@ -166,5 +171,25 @@ class Config
         }
 
         return true;
+    }
+
+    public function offsetExists($offset) {
+        return isset($this->_arr[$offset]);
+    }
+
+    public function offsetGet($offset) {
+        return isset($this->_arr[$offset]) ? $this->_arr[$offset] : null;
+    }
+
+    public function offsetSet($offset, $value) {
+        if (is_null($offset)) {
+            $this->_arr[] = $value;
+        } else {
+            $this->_arr[$offset] = $value;
+        }
+    }
+
+    public function offsetUnset($offset) {
+        unset($this->_arr[$offset]);
     }
 }

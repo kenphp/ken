@@ -2,55 +2,60 @@
 
 namespace Ken\View;
 
-use Ken\Base\Buildable;
-use Ken\Exception\InvalidConfigurationException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Base class for templating engine.
  *
  * @author Juliardi <ardi93@gmail.com>
  */
-abstract class BaseEngine implements Buildable
+abstract class BaseEngine
 {
+
+    /**
+     * Base path for view files
+     * @var string
+     */
     protected $viewPath;
-    protected $cachePath;
+
+    /**
+     * An array of function that would be accessable from view file.
+     * The array's **key** would be the name of the function.
+     * @var array
+     */
+    protected $viewFunctions;
+
+    /**
+     * @var mixed
+     */
     protected $engine;
 
-    public function __construct($config)
+    /**
+     * @param string $viewPath  Base path for view files
+     * @param array $viewFunctions An array of function that would be accessable from view file.
+     * The array's **key** would be the name of the function.
+     */
+    public function __construct($viewPath, $viewFunctions = [])
     {
-        if (!isset($config['path'])) {
-            throw new InvalidConfigurationException("Parameter 'path' is required in View component configuration.");
-        }
-
-        $viewPath = $config['path'];
-        $cachePath = isset($config['cache']) ? $config['cache'] : '';
-
-        if (substr($viewPath, -1) == DIRECTORY_SEPARATOR) {
-            $this->viewPath = $viewPath;
-        } else {
-            $this->viewPath = $viewPath.DIRECTORY_SEPARATOR;
-        }
-
-        if (isset($config['cache'])) {
-            if (substr($cachePath, -1) == DIRECTORY_SEPARATOR) {
-                $this->cachePath = $cachePath;
-            } else {
-                $this->cachePath = $cachePath.DIRECTORY_SEPARATOR;
-            }
-        }
+        $this->viewPath = rtrim($viewPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $this->viewFunctions = $viewFunctions;
     }
 
     /**
-     * {@inheritdoc}
+     * @param  string $view View file name without extension
+     * @return string View file name with extension
      */
-    public static function build(array $config = array())
-    {
-        return new static($config);
-    }
-
     protected function suffixExtension($view)
     {
         return $view.'.'.$this->getFileExtension();
+    }
+
+    /**
+    * Retrieves templating engine's instance
+    * @var mixed
+    */
+    public function getEngine() {
+        return $this->engine;
     }
 
     /**
@@ -59,12 +64,23 @@ abstract class BaseEngine implements Buildable
     abstract protected function initEngine();
 
     /**
-     * Render a view file.
+     * Fetch rendered template.
+     *
+     * @param ResponseInterface $response Http Response object
+     * @param string $view   Path of view file started from 'views' directory
+     * @param array  $params Assosiative array containing parameters to be passed to view
+     * @return ResponseInterface
+     */
+    abstract public function render(ResponseInterface $response, $view, array $params = []);
+
+    /**
+     * Fetch rendered template.
      *
      * @param string $view   Path of view file started from 'views' directory
      * @param array  $params Assosiative array containing parameters to be passed to view
+     * @return string
      */
-    abstract public function render($view, array $params = []);
+    abstract public function fetch($view, array $params = []);
 
     /**
      * Retrieves template file extension.
@@ -72,14 +88,4 @@ abstract class BaseEngine implements Buildable
      * @return string
      */
     abstract protected function getFileExtension();
-
-    /**
-     * Retrieves templating engine instance.
-     *
-     * @return mixed Instance of templating engine instance
-     */
-    public function getEngineInstance()
-    {
-        return $this->engine;
-    }
 }

@@ -10,7 +10,7 @@ class Input
     /**
      * Retrieves GET parameter.
      *
-     * @param string $nane Name of GET parameter, if null then all parameter will be returned
+     * @param string $name Name of GET parameter, if null then all parameter will be returned
      *
      * @return mixed
      */
@@ -22,7 +22,7 @@ class Input
     /**
      * Retrieves POST parameter.
      *
-     * @param string $nane $name of POST parameter, if null then all parameter will be returned
+     * @param string $name Name of POST parameter, if null then all parameter will be returned
      *
      * @return mixed
      */
@@ -34,7 +34,7 @@ class Input
     /**
      * Retrieves DELETE parameter.
      *
-     * @param string $nane Name of DELETE parameter, if null then all parameter will be returned
+     * @param string $name Name of DELETE parameter, if null then all parameter will be returned
      *
      * @return mixed
      */
@@ -46,7 +46,7 @@ class Input
     /**
      * Retrieves PUT parameter.
      *
-     * @param string $nane Name of PUT parameter, if null then all parameter will be returned
+     * @param string $name Name of PUT parameter, if null then all parameter will be returned
      *
      * @return mixed
      */

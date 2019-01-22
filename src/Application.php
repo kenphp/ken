@@ -2,199 +2,94 @@
 
 namespace Ken;
 
-use Exception;
-use Ken\Exception\InvalidConfigurationException;
-use Ken\Factory\ComponentFactory;
-use Ken\Utils\Config;
+use Ken\Container\Container;
+use Ken\Exception\HttpException;
+
+use Ken\Log\Logger;
+use Ken\Router\Router;
+use Ken\View\Engine\Plates;
+
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7\Response;
+use Nyholm\Psr7Server\ServerRequestCreator;
 
 /**
- * @author Juliardi <ardi93@gmail.com>
+ * KenPHP web application class
+ * @property \Ken\Container\Container                   $container
+ * @property \Ken\Utils\Configuration                   $configuration
+ * @property \Psr\Log\LoggerInterface                   $logger
+ * @property \Psr\Http\Message\ServerRequestInterface   $request
+ * @property \Psr\Http\Message\ResponseInterface        $response
+ * @property \Ken\Router\Router                         $router
+ * @property \Ken\View\BaseEngine                       $view
  */
-class Application
-{
-    /**
-     * @var string
-     */
-    private $basePath;
+class Application {
 
     /**
-     * @var string
+     * @var \Ken\Container\Container
      */
-    private $baseUrl;
+    protected $container;
 
     /**
-     * @var string
+     * @var \Ken\Utils\Arr
      */
-    private $name;
+    protected $configuration;
 
     /**
-     * @var string
+     * @var static
      */
-    private $timeZone;
+    protected static $instance;
 
     /**
-     * @var \Ken\Utils\Config
+     * @param array $configuration
      */
-    private $config;
-
-    /**
-     * @var array
-     */
-    private $components;
-
-    /**
-     * @var \Ken\Application
-     */
-    private static $instance;
-
-    /**
-     * @var \Ken\Factory\FactoryInterface
-     */
-    private $factory;
-
-    public function __construct(array $config)
-    {
-        $this->components = array();
-        $config = $this->getCoreComponentsConfig($config);
-        $this->config = new Config($config);
+    public function __construct($configuration = []) {
+        $this->container = new Container(['configuration' => $configuration]);
         $this->init();
         self::$instance = $this;
     }
 
     /**
-     * Retrieves core components configuration. Used internally to initialize core components.
-     *
-     * @param array $config
-     *
-     * @return array Configuration array containing core components configurations.
+     * Initializes application's components
      */
-    private function getCoreComponentsConfig($config)
-    {
-        $coreComponents = $this->coreComponents();
-        $components = $config['components'];
+    protected function init() {
+        $this->container->set('logger', function($c) {
+            $configuration = $c->get('configuration');
 
-        foreach ($coreComponents as $key => $value) {
-            if (array_key_exists($key, $components)) {
-                $config['components'][$key] = array_merge($config['components'][$key], $value);
-            } else {
-                $config['components'][$key] = $value;
-            }
-        }
+            $logger = new Logger($configuration['logger']);
 
-        return $config;
+            return $logger;
+        });
+
+        $this->container->set('request', function($c) {
+            $psr17Factory = new Psr17Factory();
+
+            $creator = new ServerRequestCreator(
+                $psr17Factory, // ServerRequestFactory
+                $psr17Factory, // UriFactory
+                $psr17Factory, // UploadedFileFactory
+                $psr17Factory  // StreamFactory
+            );
+
+            return $creator->fromGlobals();
+        });
+
+        $this->container->set('router', function($c) {
+            return new Router();
+        });
+
+        $this->container->set('response', function($c) {
+            return new Response();
+        });
+
+        $this->container->set('view', function($c) {
+            $configuration = $c->get('configuration')['view'];
+            $viewFunctions = isset($configuration['viewFunctions']) ? $configuration['viewFunctions'] : [];
+            return new Plates($configuration['viewPath'], $viewFunctions);
+        });
+
+        $this->registerErrorHandler();
     }
-
-    protected function init()
-    {
-        try {
-            $this->buildComponents();
-            $this->applyConfig($this->config->all());
-            $this->registerErrorHandler();
-        } catch (Exception $e) {
-            if (isset($this->logger)) {
-                $this->logger->error($e->getMessage());
-                $this->logger->error($e->getTraceAsString());
-            } else {
-                error_log($e->getMessage());
-                error_log($e->getTraceAsString());
-            }
-        }
-    }
-
-    /**
-     * Retrieves \Ken\Factory\FactoryInterface instance
-     * @return \Ken\Factory\FactoryInterface
-     */
-    protected function getFactory()
-    {
-        if (is_null($this->factory)) {
-            $this->factory = new ComponentFactory();
-        }
-
-        return $this->factory;
-    }
-
-    /**
-     * Builds components that has been configured in the configuration.
-     *
-     * @throws \Ken\Exception\InvalidConfigurationException
-     */
-    private function buildComponents()
-    {
-        $componentsConfig = $this->config->get('components');
-        $factory = $this->getFactory();
-
-        foreach ($componentsConfig as $key => $value) {
-            if (isset($value['class'])) {
-                $className = $value['class'];
-                $component = $factory->createObject($className, $value);
-                $this->registerComponent($key, $component);
-            } else {
-                throw new InvalidConfigurationException("Parameter 'class' is required in components configuration.");
-            }
-        }
-    }
-
-    /**
-     * Registers a component if there are no other components
-     * with the same name already registered.
-     *
-     * @param string $name       Name of the components
-     * @param object $component An object to be registered
-     *
-     * @return bool True, if success or <br>
-     *              False, if $component is not an object
-     *              or if there are other component with the same name already registered
-     */
-    public function registerComponent($name, $component)
-    {
-        if (is_object($component)) {
-            if (!isset($this->components[$name])) {
-                $this->components[$name] = $component;
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function __get($name)
-    {
-        if (property_exists($this, $name)) {
-            return $this->$name;
-        } elseif (isset($this->components[$name])) {
-            return $this->components[$name];
-        } else {
-            return;
-        }
-    }
-
-    public function __isset($name)
-    {
-        return property_exists($this, $name) || isset($this->components[$name]);
-    }
-
-    /**
-     * Runs application to handle request.
-     */
-    public function run()
-    {
-        $this->router->handleRequest($this->request);
-        $this->logger->flush();
-    }
-
-    /**
-     * Registers application routes.
-     *
-     * @param string $routeFile Route file path
-     */
-    public function registerRoutes($routeFile)
-    {
-        $this->router->setRouteFile($routeFile);
-        $this->router->registerRoutes();
-    }
-
 
     /**
      * Registers error handler for this application
@@ -202,21 +97,25 @@ class Application
     public function registerErrorHandler()
     {
         $whoops = new \Whoops\Run();
+        $configuration = $this->getConfiguration();
 
-        if ($this->config->get('debug')) {
+        if (isset($configuration['debug']) && $configuration['debug']) {
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
         } else {
             $whoops->pushHandler(new \Whoops\Handler\CallbackHandler(function ($exception) {
                 $this->logger->error($exception->getMessage(), compact('exception'));
                 $this->logger->flush();
 
-                if (is_a($exception, '\\Ken\\Exception\\HttpException')) {
-                    return $this->view->render('error', [
+                $response = $this->container->get('response');
+                $view = $this->container->get('view');
+
+                if (is_a($exception, HttpException::class)) {
+                    return $view->render($response, 'error', [
                         'code' => $exception->getCode(),
                         'message' => $exception->getMessage(),
                     ]);
                 } else {
-                    return $this->view->render('error', [
+                    return $view->render($response, 'error', [
                         'code' => 500,
                         'message' => $exception->getMessage(),
                     ]);
@@ -227,97 +126,80 @@ class Application
         $whoops->register();
     }
 
-
     /**
-     * Applies configuration.
-     * @param array $config
+     * @param  string $property Property name
+     * @return mixed
      */
-    private function applyConfig($config)
-    {
-        try {
-            $this->setBasePath($config);
-            $this->setBaseUrl($this->request);
-            $this->setName($config);
-            $this->setTimeZone($config);
-        } catch (InvalidConfigurationException $e) {
-            $this->logger->error($e->getMessage());
-            $this->logger->error($e->getTraceAsString());
-        }
-    }
+    public function __get($property) {
+        $methodName = 'get' . ucfirst(strtolower($property));
 
-    /**
-     * Sets base path of application
-     * @param array $config
-     */
-    private function setBasePath($config)
-    {
-        if (!isset($config['basePath'])) {
-            throw new InvalidConfigurationException("Configuration 'basePath' is required");
+        if (method_exists($this, $methodName)) {
+            return call_user_func([$this, $methodName]);
         }
 
-        $this->basePath = $config['basePath'];
-    }
-
-    /**
-     * Sets base url of application
-     * @param \Ken\Http\Request $request
-     */
-    private function setBaseUrl($request)
-    {
-        $this->baseUrl = $request->baseUrl;
-    }
-
-    /**
-     * Sets application name
-     * @param array $config
-     */
-    private function setName($config)
-    {
-        if (!isset($config['name'])) {
-            throw new InvalidConfigurationException("Configuration 'name' is required");
+        if ($this->container->has($property)) {
+            return $this->container->get($property);
         }
 
-        $this->name = $config['name'];
+        return null;
     }
 
     /**
-     * Sets application time zone
-     * @param array $config
+     * @return \Ken\Container\Container
      */
-    private function setTimeZone($config)
-    {
-        if (!isset($config['timeZone'])) {
-            $this->timeZone = 'UTC';
-        } else {
-            $this->timeZone = $config['timeZone'];
+    public function getContainer() {
+        return $this->container;
+    }
+
+    /**
+     * @return \Ken\Utils\Arr
+     */
+    public function getConfiguration() {
+        if (is_null($this->configuration)) {
+            $this->configuration = $this->container->get('configuration');
         }
-        date_default_timezone_set($this->timeZone);
+
+        return $this->configuration;
     }
 
     /**
-     * Returns core components configurations.
+     * Runs application to handle request.
      */
-    private function coreComponents()
+    public function run()
     {
-        return array(
-            'logger' => ['class' => 'Ken\Log\Logger'],
-            'request' => [
-                'class' => 'Ken\Http\ServerRequest',
-                'server' => $_SERVER,
-                'get' => $_GET,
-                'post' => $_POST,
-                'files' => $_FILES,
-            ],
-            'router' => ['class' => 'Ken\Routing\Router'],
-            'view' => ['class' => 'Ken\View\View'],
-        );
+        $request = $this->request;
+        $response = $this->response;
+
+        $httpMethod = $request->getMethod();
+        $pathInfo = $request->getUri()->getPath();
+        if (empty($pathInfo)) {
+            $pathInfo = '/';
+        }
+
+        $routeObject = $this->router->resolve($httpMethod, $pathInfo);
+        if($routeObject) {
+            foreach ($routeObject['before'] as $before) {
+                call_user_func($before, $request);
+            }
+
+            // You can add some custom parameters here, like HttpRequest and HttpResponse object
+            $response = call_user_func_array($routeObject['handler'], [$request, $response, $routeObject['params']]);
+
+            foreach ($routeObject['after'] as $after) {
+                call_user_func($after, $response);
+            }
+        }
+
+        $this->logger->flush();
+
+        (new \Zend\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
+
     }
 
     /**
      * @return static
      */
-    public static function getInstance()
-    {
+    public static function getInstance() {
         return self::$instance;
     }
 }
