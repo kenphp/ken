@@ -112,16 +112,20 @@ class Application {
                 $view = $this->container->get('view');
 
                 if (is_a($exception, HttpException::class)) {
-                    return $view->render($response, 'error', [
+                    $response = $view->render($response, 'error', [
                         'code' => $exception->getCode(),
                         'message' => $exception->getMessage(),
                     ]);
                 } else {
-                    return $view->render($response, 'error', [
+                    $response = $view->render($response, 'error', [
                         'code' => 500,
                         'message' => $exception->getMessage(),
                     ]);
                 }
+
+                (new \Zend\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
+
+                return \Whoops\Handler\Handler::DONE;
             }));
         }
 
