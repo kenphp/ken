@@ -90,7 +90,7 @@ class Route
      * @param callable $callback
      * @param array   $options
      */
-    public static function group($route, $callback, $options)
+    public static function group($route, $callback, $options = [])
     {
         app()->router->group($route, $callback, $options);
     }
