@@ -203,6 +203,8 @@ class Application {
             foreach ($routeObject['after'] as $after) {
                 call_user_func($after, $response);
             }
+        } else {
+            throw new HttpException(404, "Route '{$pathInfo}' not found");
         }
 
         $this->logger->flush();
