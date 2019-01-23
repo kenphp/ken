@@ -11,12 +11,21 @@ use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
-final class Psr17Factory implements ServerRequestFactoryInterface, ResponseFactoryInterface {
+final class Psr17Factory implements ServerRequestFactoryInterface,
+                                    RequestFactoryInterface,
+                                    ResponseFactoryInterface,
+                                    UriFactoryInterface,
+                                    StreamFactoryInterface,
+                                    UploadedFileFactoryInterface {
 
     /**
      * @inheritDoc
