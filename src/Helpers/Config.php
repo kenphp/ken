@@ -14,7 +14,7 @@ class Config
      */
     public static function all()
     {
-        return app()->config->all();
+        return app()->configuration->all();
     }
 
     /**
@@ -32,7 +32,7 @@ class Config
      *
      * To access the value of 'somekey', you can call the method like this :
      *
-     *     echo $config->get('params.somekey');
+     *     echo $configuration->get('params.somekey');
      *
      * The code above will print 'value of key' which is the value of
      * config 'somekey' in the 'params' array.
@@ -43,7 +43,7 @@ class Config
      */
     public static function get($key)
     {
-        return app()->config->get($key);
+        return app()->configuration->get($key);
     }
 
     /**
@@ -61,14 +61,15 @@ class Config
      *
      * To set the value of 'somekey' to 'another value of key', you can call the method like this :
      *
-     *     $config->set('params.somekey','another value of key');
+     *     $configuration->set('params.somekey','another value of key');
      *
      * @param string $key Key of config
+     * @param string $value Value of config
      *
      * @return mixed Value of config
      */
     public static function set($key, $value)
     {
-        return app()->config->set($key, $value);
+        return app()->configuration->set($key, $value);
     }
 }

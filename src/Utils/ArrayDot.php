@@ -5,7 +5,7 @@ namespace Ken\Utils;
 /**
  * @author Juliardi <ardi93@gmail.com>
  */
-class Arr implements \ArrayAccess
+class ArrayDot implements \ArrayAccess
 {
     /**
      * @var array

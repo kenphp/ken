@@ -2,14 +2,16 @@
 
 namespace Ken;
 
+use Closure;
+
 use Ken\Container\Container;
 use Ken\Exception\HttpException;
-
+use Ken\Http\Psr17Factory;
 use Ken\Log\Logger;
 use Ken\Router\Router;
+use Ken\Utils\ArrayDot;
 use Ken\View\Engine\Plates;
 
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7Server\ServerRequestCreator;
 
@@ -152,11 +154,19 @@ class Application {
     }
 
     /**
-     * @return \Ken\Utils\Arr
+     * @return static
+     */
+    public static function getInstance() {
+        return self::$instance;
+    }
+
+    /**
+     * @return \Ken\Utils\ArrayDot
      */
     public function getConfiguration() {
         if (is_null($this->configuration)) {
-            $this->configuration = $this->container->get('configuration');
+            $config = $this->container->get('configuration');
+            $this->configuration = new ArrayDot($config);
         }
 
         return $this->configuration;
@@ -182,8 +192,9 @@ class Application {
                 call_user_func($before, $request);
             }
 
-            // You can add some custom parameters here, like HttpRequest and HttpResponse object
-            $response = call_user_func_array($routeObject['handler'], [$request, $response, $routeObject['params']]);
+            $baseNamespace = $this->configuration->get('controllersNamespace');
+            $handler = $this->convertCallbackToClosure($routeObject['handler'], $baseNamespace);
+            $response = call_user_func_array($handler, [$request, $response, $routeObject['params']]);
 
             foreach ($routeObject['after'] as $after) {
                 call_user_func($after, $response);
@@ -197,9 +208,31 @@ class Application {
     }
 
     /**
-     * @return static
+     * Converts callback to Closure.
+     *
+     * @param string|Closure $callback
+     * @param string         $namespace
+     *
+     * @return Closure
      */
-    public static function getInstance() {
-        return self::$instance;
+    protected function convertCallbackToClosure($callback, $namespace)
+    {
+        if ($callback instanceof Closure || is_callable($callback)) {
+            return $callback;
+        } elseif (is_string($callback)) {
+            $namespace = rtrim($namespace, '\\').'\\';
+            $arrCallback = explode('::', $callback);
+            $isStaticCall = count($arrCallback) == 2;
+            if ($isStaticCall) {
+                $className = $namespace.$arrCallback[0];
+                return [$className, $arrCallback[1]];
+            } else {
+                $arrCallback = explode(':', $callback);
+                $className = $namespace.$arrCallback[0];
+                // Must be replaced with a safer way to instantiate an object
+                $obj = $this->container->get($className);
+                return [$obj, $arrCallback[1]];
+            }
+        }
     }
 }

@@ -39,6 +39,7 @@ abstract class BaseEngine
     {
         $this->viewPath = rtrim($viewPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->viewFunctions = $viewFunctions;
+        $this->initEngine();
     }
 
     /**

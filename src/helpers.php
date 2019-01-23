@@ -28,3 +28,19 @@ if (!function_exists('render')) {
         return app()->view->render($response, $view, $params);
     }
 }
+
+if (!function_exists('renderJson')) {
+    /**
+     * Render a JSON string.
+     *
+     * @param ResponseInterface $response
+     * @param array $array An array to be converted to JSON string
+     * @return ResponseInterface
+     */
+    function renderJson(ResponseInterface $response, array $array)
+    {
+        $response->getBody()->write(json_encode($array));
+
+        return $response->withHeader('Content-type', 'application/json');
+    }
+}
