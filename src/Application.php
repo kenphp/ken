@@ -6,12 +6,12 @@ use Closure;
 
 use Ken\Container\Container;
 use Ken\Exception\HttpException;
-use Ken\Http\Psr17Factory;
 use Ken\Log\Logger;
 use Ken\Router\Router;
 use Ken\Utils\ArrayDot;
 use Ken\View\Engine\Plates;
 
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7Server\ServerRequestCreator;
 
