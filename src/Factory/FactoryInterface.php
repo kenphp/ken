@@ -17,7 +17,7 @@ interface FactoryInterface
     * @param array $parameters List of parameters for creating object
     * @return object
     *
-    * @throws \Psr\Log\InvalidArgumentException
+    * @throws \InvalidArgumentException
     */
     public function createObject($builder, $parameters = array());
 }

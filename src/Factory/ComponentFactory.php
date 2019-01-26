@@ -2,7 +2,7 @@
 
 namespace Ken\Factory;
 
-use Psr\Log\InvalidArgumentException;
+use InvalidArgumentException;
 
 /**
  * @author Juliardi <ardi93@gmail.com>
@@ -19,7 +19,7 @@ class ComponentFactory implements FactoryInterface
      * @param array $parameters List of parameters for creating object
      * @return object
      *
-     * @throws \Psr\Log\InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function createObject($builder, $parameters = array())
     {

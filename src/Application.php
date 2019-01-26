@@ -6,6 +6,9 @@ use Closure;
 
 use Ken\Container\Container;
 use Ken\Exception\HttpException;
+use Ken\Http\MiddlewareFactory;
+use Ken\Http\ServerRequestHandler;
+
 use Ken\Log\Logger;
 use Ken\Router\Router;
 use Ken\Utils\ArrayDot;
@@ -15,10 +18,12 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7Server\ServerRequestCreator;
 
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * KenPHP web application class
  * @property \Ken\Container\Container                   $container
- * @property \Ken\Utils\Configuration                   $configuration
+ * @property \Ken\Utils\ArrayDot                        $configuration
  * @property \Psr\Log\LoggerInterface                   $logger
  * @property \Psr\Http\Message\ServerRequestInterface   $request
  * @property \Psr\Http\Message\ResponseInterface        $response
@@ -33,7 +38,7 @@ class Application {
     protected $container;
 
     /**
-     * @var \Ken\Utils\Arr
+     * @var \Ken\Utils\ArrayDot
      */
     protected $configuration;
 
@@ -106,7 +111,6 @@ class Application {
         } else {
             $whoops->pushHandler(new \Whoops\Handler\CallbackHandler(function ($exception) {
                 $this->logger->error($exception->getMessage(), compact('exception'));
-                $this->logger->flush();
 
                 $response = $this->container->get('response');
                 $view = $this->container->get('view');
@@ -123,7 +127,7 @@ class Application {
                     ]);
                 }
 
-                (new \Zend\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
+                $this->emitResponse($response);
 
                 return \Whoops\Handler\Handler::DONE;
             }));
@@ -183,6 +187,7 @@ class Application {
     {
         $request = $this->request;
         $response = $this->response;
+        $config = $this->configuration;
 
         $httpMethod = $request->getMethod();
         $pathInfo = $request->getUri()->getPath();
@@ -192,25 +197,43 @@ class Application {
 
         $routeObject = $this->router->resolve($pathInfo, $httpMethod);
         if($routeObject) {
-            foreach ($routeObject['before'] as $before) {
-                call_user_func($before, $request);
+            $middlewareList = [];
+            if (isset($routeObject['middleware'])) {
+                $middlewareConfig = $config->get('middlewares');
+                $middlewareCount = count($routeObject['middleware']);
+                $middlewareNext = null;
+
+                for ($i=$middlewareCount-1; $i >= 0; $i--) {
+                    $middlewareName = $routeObject['middleware'][$i];
+                    $middlewareClass = $middlewareConfig[$middlewareName];
+                    $middlewareList[$i] = MiddlewareFactory::createObject($middlewareClass, [
+                        'response' => $response,
+                        'next' => $middlewareNext,
+                    ]);
+                    $middlewareNext = $middlewareList[$i];
+                }
             }
 
-            $baseNamespace = $this->configuration->get('controllersNamespace');
+            $baseNamespace = $config->get('controllersNamespace');
             $handler = $this->convertCallbackToClosure($routeObject['handler'], $baseNamespace);
-            $response = call_user_func_array($handler, [$request, $response, $routeObject['params']]);
+            $params = isset($routeObject['params']) ? $routeObject['params'] : [];
+            $requestHandler = new ServerRequestHandler($response, $handler, $routeObject['params']);
 
-            foreach ($routeObject['after'] as $after) {
-                call_user_func($after, $response);
-            }
+            $response = $middlewareList[0]->process($request, $requestHandler);
         } else {
             throw new HttpException(404, "Route '{$pathInfo}' not found");
         }
 
+        $this->emitResponse($response);
+    }
+
+    /**
+     * Emits response to client
+     * @param  ResponseInterface $response
+     */
+    protected function emitResponse(ResponseInterface $response) {
         $this->logger->flush();
-
         (new \Zend\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
-
     }
 
     /**
