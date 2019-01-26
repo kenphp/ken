@@ -110,24 +110,23 @@
         },
         {
             "name": "kenphp/router",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kenphp/router.git",
-                "reference": "ee4df5fe600187713441bb0aac585753e6d1deac"
+                "reference": "b3f1f6f8be3a01e520b3d191a999a9f7d6474ba5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kenphp/router/zipball/ee4df5fe600187713441bb0aac585753e6d1deac",
-                "reference": "ee4df5fe600187713441bb0aac585753e6d1deac",
+                "url": "https://api.github.com/repos/kenphp/router/zipball/b3f1f6f8be3a01e520b3d191a999a9f7d6474ba5",
+                "reference": "b3f1f6f8be3a01e520b3d191a999a9f7d6474ba5",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6"
+                "php": ">=7.0"
             },
             "require-dev": {
-                "codeception/codeception": "^2.3",
-                "codeception/specify": "^0.4.6"
+                "codeception/codeception": "^2.3"
             },
             "type": "library",
             "autoload": {
@@ -146,7 +145,7 @@
                 }
             ],
             "description": "Simple PHP Router",
-            "time": "2018-11-26T03:00:25+00:00"
+            "time": "2019-01-26T06:35:00+00:00"
         },
         {
             "name": "league/plates",

@@ -5,7 +5,10 @@ namespace Ken\Http;
 use InvalidArgumentException;
 use Ken\Factory\FactoryInterface;
 
-class MiddlewareFactory extends FactoryInterface {
+/**
+ * @author Juliardi [ardi93@gmail.com]
+ */
+class MiddlewareFactory implements FactoryInterface {
 
     /**
      * Creates a middleware instance
@@ -17,7 +20,7 @@ class MiddlewareFactory extends FactoryInterface {
      * @return \Ken\Http\BaseMiddleware
      * @throws InvalidArgumentException
      */
-    public static function createObject($builder, $parameters = array()) {
+    public function createObject($builder, $parameters = array()) {
         if (is_string($builder)) {
             if (class_exists($builder)) {
                 $response = $parameters['response'];

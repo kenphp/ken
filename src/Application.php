@@ -68,6 +68,10 @@ class Application {
             return $logger;
         });
 
+        $this->container->set(MiddlewareFactory::class, function($c) {
+            return new MiddlewareFactory();
+        });
+
         $this->container->set('request', function($c) {
             $psr17Factory = new Psr17Factory();
 
@@ -202,11 +206,12 @@ class Application {
                 $middlewareConfig = $config->get('middlewares');
                 $middlewareCount = count($routeObject['middleware']);
                 $middlewareNext = null;
+                $middlewareFactory = $this->container->get(MiddlewareFactory::class);
 
                 for ($i=$middlewareCount-1; $i >= 0; $i--) {
                     $middlewareName = $routeObject['middleware'][$i];
                     $middlewareClass = $middlewareConfig[$middlewareName];
-                    $middlewareList[$i] = MiddlewareFactory::createObject($middlewareClass, [
+                    $middlewareList[$i] = $middlewareFactory->createObject($middlewareClass, [
                         'response' => $response,
                         'next' => $middlewareNext,
                     ]);
