@@ -224,7 +224,12 @@ class Application {
             $params = isset($routeObject['params']) ? $routeObject['params'] : [];
             $requestHandler = new ServerRequestHandler($response, $handler, $routeObject['params']);
 
-            $response = $middlewareList[0]->process($request, $requestHandler);
+            if (isset($middlewareList[0])) {
+                $response = $middlewareList[0]->process($request, $requestHandler);
+            } else {
+                $response = $requestHandler->handle($request);
+            }
+
         } else {
             throw new HttpException(404, "Route '{$pathInfo}' not found");
         }
