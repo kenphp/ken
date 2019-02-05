@@ -116,19 +116,25 @@ class Application {
             $whoops->pushHandler(new \Whoops\Handler\CallbackHandler(function ($exception) {
                 $this->logger->error($exception->getMessage(), compact('exception'));
 
+                $request = $this->container->get('request');
                 $response = $this->container->get('response');
                 $view = $this->container->get('view');
+                $errorInfo = ['message' => $exception->getMessage()];
 
                 if (is_a($exception, HttpException::class)) {
-                    $response = $view->render($response, 'error', [
-                        'code' => $exception->getCode(),
-                        'message' => $exception->getMessage(),
-                    ]);
+                    $errorInfo['code'] = $exception->getCode();
                 } else {
-                    $response = $view->render($response, 'error', [
-                        'code' => 500,
-                        'message' => $exception->getMessage(),
-                    ]);
+                    $errorInfo['code'] = 500;
+                }
+
+                $headerAccept = $request->getHeader('Accept');
+                if ($headerAccept == 'application/json') {
+                    $response = $response->withStatus($errorInfo['code']);
+                    $response->getBody()->write(json_encode($errorInfo));
+
+                    $response = $response->withHeader('Content-Type', 'application/json');
+                } else {
+                    $response = $view->render($response, 'error', $errorInfo);
                 }
 
                 $this->emitResponse($response);
