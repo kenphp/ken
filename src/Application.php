@@ -128,7 +128,7 @@ class Application {
                 }
 
                 $headerAccept = $request->getHeader('Accept');
-                if ($headerAccept == 'application/json') {
+                if (in_array('application/json', $headerAccept)) {
                     $response = $response->withStatus($errorInfo['code']);
                     $response->getBody()->write(json_encode($errorInfo));
 
