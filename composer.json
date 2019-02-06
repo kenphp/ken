@@ -1,5 +1,6 @@
 {
     "name": "kenphp/ken",
+    "description": "Micro PHP Framework",
     "license": "MIT",
     "authors": [
         {
