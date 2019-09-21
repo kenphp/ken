@@ -51,7 +51,9 @@ class Application {
      * @param array $configuration
      */
     public function __construct($configuration = []) {
-        $this->container = new Container(['configuration' => $configuration]);
+        $this->container = new Container();
+        $this->container->set('configuration', new ArrayDot($configuration));
+
         $this->init();
         self::$instance = $this;
     }
@@ -183,8 +185,7 @@ class Application {
      */
     public function getConfiguration() {
         if (is_null($this->configuration)) {
-            $config = $this->container->get('configuration');
-            $this->configuration = new ArrayDot($config);
+            $this->configuration = $this->container->get('configuration');
         }
 
         return $this->configuration;
