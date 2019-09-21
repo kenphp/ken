@@ -129,8 +129,8 @@ class LogFormatter implements FormatterInterface, Buildable {
      */
     protected function getExceptionTrace(array $context)
     {
-        if (array_key_exists('exception', $context)) {
-            if ($context['exception'] instanceof \Exception) {
+        if (isset($context['exception'])) {
+            if ($context['exception'] instanceof \Exception || $context['exception'] instanceof \Error) {
                 $strException = $context['exception']->getTraceAsString();
 
                 return $strException;

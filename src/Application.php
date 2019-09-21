@@ -12,7 +12,6 @@ use Ken\Http\ServerRequestHandler;
 use Ken\Log\Logger;
 use Ken\Router\Router;
 use Ken\Utils\ArrayDot;
-use Ken\View\Engine\Plates;
 
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
@@ -95,12 +94,6 @@ class Application {
             return new Response();
         });
 
-        $this->container->set('view', function($c) {
-            $configuration = $c->get('configuration')['view'];
-            $viewFunctions = isset($configuration['viewFunctions']) ? $configuration['viewFunctions'] : [];
-            return new Plates($configuration['viewPath'], $viewFunctions);
-        });
-
         $this->registerErrorHandler();
     }
 
@@ -120,7 +113,6 @@ class Application {
 
                 $request = $this->container->get('request');
                 $response = $this->container->get('response');
-                $view = $this->container->get('view');
                 $errorInfo = ['message' => $exception->getMessage()];
 
                 if (is_a($exception, HttpException::class)) {
@@ -136,6 +128,7 @@ class Application {
 
                     $response = $response->withHeader('Content-Type', 'application/json');
                 } else {
+                    $view = $this->container->get('view');
                     $response = $view->render($response, 'error', $errorInfo);
                 }
 
