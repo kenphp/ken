@@ -243,7 +243,7 @@ class Application {
      */
     protected function emitResponse(ResponseInterface $response) {
         $this->logger->flush();
-        (new \Zend\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
+        (new \Laminas\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
     }
 
     /**
