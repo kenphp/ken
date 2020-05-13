@@ -219,8 +219,13 @@ class Application {
                 }
             }
 
-            $baseNamespace = $config->get('controllersNamespace');
-            $handler = $this->convertCallbackToClosure($routeObject['handler'], $baseNamespace);
+            $namespace = $config->get('controllersNamespace');
+
+            if(isset($routeObject['namespace'])) {
+                $namespace = $routeObject['namespace'];
+            }
+
+            $handler = $this->convertCallbackToClosure($routeObject['handler'], $namespace);
             $params = isset($routeObject['params']) ? $routeObject['params'] : [];
             $requestHandler = new ServerRequestHandler($response, $handler, $routeObject['params']);
 
@@ -261,17 +266,17 @@ class Application {
         } elseif (is_string($callback)) {
             $namespace = rtrim($namespace, '\\').'\\';
             $arrCallback = explode('::', $callback);
-            $isStaticCall = count($arrCallback) == 2;
-            if ($isStaticCall) {
-                $className = $namespace.$arrCallback[0];
-                return [$className, $arrCallback[1]];
+
+            if (count($arrCallback) == 2) {
+                $classObj = $namespace.$arrCallback[0];
             } else {
                 $arrCallback = explode(':', $callback);
                 $className = $namespace.$arrCallback[0];
                 // Must be replaced with a safer way to instantiate an object
-                $obj = $this->container->get($className);
-                return [$obj, $arrCallback[1]];
+                $classObj = $this->container->get($className);
             }
+
+            return [$classObj, $arrCallback[1]];
         }
     }
 }
